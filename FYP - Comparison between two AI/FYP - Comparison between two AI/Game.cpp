@@ -43,7 +43,8 @@ void Game::processEvents()
 
 void Game::processKeys(sf::Event t_event)
 {
-	if (sf::Keyboard::Escape == t_event.key.code)
+	m_car.handleInput(t_event);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		m_window.close();
 	}

@@ -141,12 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boundry.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Track.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boundry.h" />
+    <ClInclude Include="BoundryData.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Track.h" />

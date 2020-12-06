@@ -18,11 +18,7 @@
 
 using namespace std;
 
-/*
-Brief description of Boid Class:
-// This file acts as the main for our boids project. Here, we utilize the SFML
-// library, import boids and flock classes, and run the program.-
-*/
+
 
 int main()
 {
