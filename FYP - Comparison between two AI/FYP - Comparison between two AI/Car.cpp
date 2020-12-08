@@ -65,14 +65,10 @@ void Car::setup()
 
 void Car::move(Time t_deltaTime)
 {
-	/*double steering = m_rotation * 180 / PI;
-	Vector2f newVel;
-	m_forward = Vector2f(cos(m_rotation), sin(m_rotation));
-	m_forward = m_forward * m_speed;
-	newVel = m_velocity + m_forward;
-	m_velocity = newVel;
+	float angle = (m_rotation - 90) * PI / 180;
+	m_velocity = Vector2f(cos(angle), sin(angle));
 	m_velocity = normalise(m_velocity);
-	m_pos += (m_velocity * (m_speed * t_deltaTime.asSeconds()));*/
+	m_pos += m_velocity * m_speed * t_deltaTime.asSeconds();
 }
 
 Vector2f Car::normalise(Vector2f t_vec)

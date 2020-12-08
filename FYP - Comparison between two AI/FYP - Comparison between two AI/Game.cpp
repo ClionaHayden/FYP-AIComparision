@@ -3,7 +3,7 @@ using namespace std;
 
 Game::Game():
 	m_window{ sf::VideoMode{ 970 , 950 , 32 }, "FYP - AI Comparison" },
-	m_car(Vector2f(90.0f,350.0f), 2.0f)
+	m_car(Vector2f(90.0f,350.0f), 0.0f)
 {
 }
 

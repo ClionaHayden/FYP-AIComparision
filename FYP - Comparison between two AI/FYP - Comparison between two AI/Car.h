@@ -22,10 +22,10 @@ private:
 	Vector2f m_velocity;
 	Vector2f m_forward;
 
-	const float RATE_OF_ROTATION = 1.0f;
+	const float RATE_OF_ROTATION = 3.0f;
 	const float MASS = 1.0f;
-	const float MAX_ACCELERATION = 20.0f;
-	const float RATE_OF_ACCELERATION = 1.0f;
+	const float MAX_ACCELERATION = 100.0f;
+	const float RATE_OF_ACCELERATION = 5.0f;
 
 	void setup();
 	void move(Time t_deltaTime);
