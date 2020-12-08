@@ -12,6 +12,9 @@ public:
 	void update(Time t_deltaTime);
 	void render(RenderWindow& t_window);
 	void handleInput(Event& e);
+	Vector2f getPos() { return m_pos; };
+	std::vector<Vector2f> getColLines() { return m_collisionLines; };
+	void push(Vector2f t_dir) { m_pos += t_dir; };
 private:
 	Sprite m_sprite;
 	Texture m_tex;

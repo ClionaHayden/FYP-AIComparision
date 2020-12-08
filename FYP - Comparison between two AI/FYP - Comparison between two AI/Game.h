@@ -3,7 +3,6 @@
 
 #include "SFML/Window.hpp"
 
-#include "Car.h"
 #include "Track.h"
 
 using namespace std;
@@ -26,7 +25,6 @@ private:
 	void render();
 
 	sf::RenderWindow m_window; 
-	Car m_car;
 	Track m_track;
 };
 

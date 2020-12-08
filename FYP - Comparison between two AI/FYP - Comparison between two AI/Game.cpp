@@ -2,8 +2,7 @@
 using namespace std;
 
 Game::Game():
-	m_window{ sf::VideoMode{ 970 , 950 , 32 }, "FYP - AI Comparison" },
-	m_car(Vector2f(90.0f,350.0f), 0.0f)
+	m_window{ sf::VideoMode{ 970 , 950 , 32 }, "FYP - AI Comparison" }
 {
 }
 
@@ -43,7 +42,7 @@ void Game::processEvents()
 
 void Game::processKeys(sf::Event t_event)
 {
-	m_car.handleInput(t_event);
+	m_track.handleInput(t_event);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		m_window.close();
@@ -52,13 +51,12 @@ void Game::processKeys(sf::Event t_event)
 
 void Game::update(sf::Time t_deltaTime)
 {
-	m_car.update(t_deltaTime);
+	m_track.update(t_deltaTime);
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	m_track.render(m_window);
-	m_car.render(m_window);
 	m_window.display();
 }

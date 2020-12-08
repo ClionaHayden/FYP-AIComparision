@@ -9,6 +9,8 @@ public:
 	void toggleDraw();
 	void draw(RenderWindow& t_win);
 	void setOrigin(sf::Vector2f t_new);
+	FloatRect getBounds() { return m_boundry.getGlobalBounds(); };
+	Vector2f getPos() { return m_pos; };
 private:
 	sf::RectangleShape m_boundry;
 	bool m_draw;
