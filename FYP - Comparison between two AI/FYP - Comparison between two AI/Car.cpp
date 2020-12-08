@@ -19,11 +19,28 @@ void Car::update(Time t_deltaTime)
 	m_sprite.setRotation(m_rotation);
 	move(t_deltaTime);
 	m_sprite.setPosition(m_pos);
+	for (int i = 0; i < MAX_COLLISIONS; i++)
+	{
+		float angle = (m_rotation + 180 + (45 * i)) * PI / 180;
+		Vector2f vec = Vector2f(cos(angle), sin(angle));
+		vec *= COLLISION_RADIUS;
+		vec = m_pos + vec;
+		m_collisionLines[i] = vec;
+	}
 }
 
 void Car::render(RenderWindow& t_window)
 {
 	t_window.draw(m_sprite);
+	for (int i = 0; i < MAX_COLLISIONS; i++)
+	{
+		sf::VertexArray line(sf::LinesStrip,2);
+		line[0].position = m_pos;
+		line[0].color = sf::Color::Black;
+		line[1].position = m_collisionLines[i];
+		line[1].color = sf::Color::Black;
+		t_window.draw(line);
+	}
 }
 
 void Car::handleInput(Event& e)
@@ -61,6 +78,15 @@ void Car::setup()
 	m_sprite.setTexture(m_tex);
 	m_sprite.setPosition(m_pos);
 	m_sprite.setOrigin(m_sprite.getGlobalBounds().width / 2, m_sprite.getGlobalBounds().height / 2);
+
+	for (int i = 0; i < MAX_COLLISIONS; i++)
+	{
+		float angle =  (m_rotation + 180 + (45 * i)) * PI / 180;
+		Vector2f vec = Vector2f(cos(angle), sin(angle));
+		vec *= COLLISION_RADIUS;
+		vec = m_pos + vec;
+		m_collisionLines.push_back(vec);
+	}
 }
 
 void Car::move(Time t_deltaTime)
