@@ -26,6 +26,8 @@ private:
 
 	Car m_car;
 
+	sf::Time m_inputTimer;
+
 	void setup();
 	void setupBoundries();
 	void checkCarCollision();

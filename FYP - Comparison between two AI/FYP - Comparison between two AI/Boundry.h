@@ -11,10 +11,13 @@ public:
 	void setOrigin(sf::Vector2f t_new);
 	FloatRect getBounds() { return m_boundry.getGlobalBounds(); };
 	Vector2f getPos() { return m_pos; };
+	float getRot() { return m_rotation; };
+	Vector2f getOrigin() { return m_boundry.getOrigin(); };
 private:
 	sf::RectangleShape m_boundry;
 	bool m_draw;
 	Vector2f m_pos;	
+	float m_rotation;
 
 	void setup(Vector2f t_size, float t_rot);
 };

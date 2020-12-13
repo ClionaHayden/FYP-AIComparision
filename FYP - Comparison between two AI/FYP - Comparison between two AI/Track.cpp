@@ -1,8 +1,10 @@
 #include "Track.h"
+#define PI 3.14159265359
 
 Track::Track() :
 	m_drawBoundry{ true },
-	m_car(Vector2f(90.0f, 350.0f), 0.0f)
+	m_car{ Vector2f(90.0f, 350.0f), 0.0f },
+	m_inputTimer{ sf::Time::Zero }
 {
 	setup();
 }
@@ -13,8 +15,9 @@ Track::~Track()
 
 void Track::update(Time t_deltaTime)
 {
+	m_inputTimer += t_deltaTime;
 	m_car.update(t_deltaTime);
-	checkCarCollision();
+	//checkCarCollision();
 }
 
 void Track::render(RenderWindow& t_window)
@@ -32,7 +35,16 @@ void Track::render(RenderWindow& t_window)
 
 void Track::handleInput(Event& e)
 {
-	m_car.handleInput(e);
+	if (m_inputTimer.asSeconds() > 0.2)
+	{
+		m_car.handleInput(e);
+		if (sf::Keyboard::B == e.key.code)
+		{
+			if (m_drawBoundry) { m_drawBoundry = false; }
+			else { m_drawBoundry = true; }
+		}
+		m_inputTimer = sf::Time::Zero;
+	}
 }
 
 void Track::setup()
@@ -98,3 +110,4 @@ bool Track::lineCollision(float x1, float y1, float x2, float y2, float x3, floa
 	}
 	return false;
 }
+

@@ -2,7 +2,8 @@
 
 Boundry::Boundry(Vector2f t_pos, Vector2f t_size, float t_rot) :
 	m_pos(t_pos),
-	m_draw(true)
+	m_draw(true),
+	m_rotation(t_rot)
 {
 	setup(t_size, t_rot);
 }
