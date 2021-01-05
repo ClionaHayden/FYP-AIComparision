@@ -10,7 +10,7 @@ public:
 	Car(Vector2f t_startPos, float t_startSpeed);
 	~Car();
 	void update(Time t_deltaTime);
-	void render(RenderWindow& t_window);
+	void render(RenderWindow& t_window,bool t_debug);
 	void handleInput(Event& e);
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
@@ -29,7 +29,7 @@ private:
 	const int MAX_COLLISIONS = 5;
 	const float COLLISION_RADIUS = 40;
 
-	const float RATE_OF_ROTATION = 3.0f;
+	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;
 	const float MAX_ACCELERATION = 100.0f;
 	const float RATE_OF_ACCELERATION = 5.0f;

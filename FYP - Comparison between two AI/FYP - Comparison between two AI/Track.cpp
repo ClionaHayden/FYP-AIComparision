@@ -2,7 +2,7 @@
 #define PI 3.14159265359
 
 Track::Track() :
-	m_drawBoundry{ true },
+	m_drawBoundry{ false },
 	m_car{ Vector2f(90.0f, 350.0f), 0.0f },
 	m_inputTimer{ sf::Time::Zero }
 {
@@ -17,7 +17,7 @@ void Track::update(Time t_deltaTime)
 {
 	m_inputTimer += t_deltaTime;
 	m_car.update(t_deltaTime);
-	//checkCarCollision();
+	checkCarCollision();
 }
 
 void Track::render(RenderWindow& t_window)
@@ -30,14 +30,14 @@ void Track::render(RenderWindow& t_window)
 			b.draw(t_window);
 		}
 	}
-	m_car.render(t_window);
+	m_car.render(t_window, m_drawBoundry);
 }
 
 void Track::handleInput(Event& e)
 {
-	if (m_inputTimer.asSeconds() > 0.2)
+	m_car.handleInput(e);
+	if (m_inputTimer.asSeconds() > 0.1)
 	{
-		m_car.handleInput(e);
 		if (sf::Keyboard::B == e.key.code)
 		{
 			if (m_drawBoundry) { m_drawBoundry = false; }

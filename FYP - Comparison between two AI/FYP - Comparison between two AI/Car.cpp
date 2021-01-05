@@ -29,17 +29,20 @@ void Car::update(Time t_deltaTime)
 	}
 }
 
-void Car::render(RenderWindow& t_window)
+void Car::render(RenderWindow& t_window, bool t_debug)
 {
 	t_window.draw(m_sprite);
-	for (int i = 0; i < MAX_COLLISIONS; i++)
+	if (t_debug)
 	{
-		sf::VertexArray line(sf::LinesStrip,2);
-		line[0].position = m_pos;
-		line[0].color = sf::Color::Black;
-		line[1].position = m_collisionLines[i];
-		line[1].color = sf::Color::Black;
-		t_window.draw(line);
+		for (int i = 0; i < MAX_COLLISIONS; i++)
+		{
+			sf::VertexArray line(sf::LinesStrip, 2);
+			line[0].position = m_pos;
+			line[0].color = sf::Color::Black;
+			line[1].position = m_collisionLines[i];
+			line[1].color = sf::Color::Black;
+			t_window.draw(line);
+		}
 	}
 }
 
