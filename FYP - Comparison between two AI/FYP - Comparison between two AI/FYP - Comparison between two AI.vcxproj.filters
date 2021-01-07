@@ -30,6 +30,9 @@
     <ClCompile Include="Boundry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Checkpoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Car.h">
@@ -45,6 +48,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoundryData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckpointData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Checkpoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

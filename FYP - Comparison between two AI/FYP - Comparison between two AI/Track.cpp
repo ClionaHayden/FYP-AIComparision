@@ -29,6 +29,10 @@ void Track::render(RenderWindow& t_window)
 		{
 			b.draw(t_window);
 		}
+		for (std::shared_ptr<Checkpoint> c : m_checkpoints)
+		{
+			c->draw(t_window);
+		}
 	}
 	m_car.render(t_window, m_drawBoundry);
 }
@@ -56,6 +60,7 @@ void Track::setup()
 	m_sprite.setTexture(m_tex);
 
 	setupBoundries();
+	setupCheckpoints();
 }
 
 void Track::setupBoundries()
@@ -68,6 +73,16 @@ void Track::setupBoundries()
 			temp.setOrigin(Vector2f(m_boundryData.m_size[i].x / 2.0f, m_boundryData.m_size[i].y / 2.0f));
 		}
 		m_boundries.push_back(temp);
+	}
+}
+
+void Track::setupCheckpoints()
+{
+	for (int i = 0; i < CheckpointData::MAX_ENTRIES; i++)
+	{
+		std::shared_ptr<Checkpoint>temp = std::make_shared<Checkpoint>(m_checkpointData.m_pos[i], m_checkpointData.m_size[i]);
+		temp->setOrigin(Vector2f(m_checkpointData.m_size[i].x / 2.0f, m_checkpointData.m_size[i].y / 2.0f));
+		m_checkpoints.push_back(temp);
 	}
 }
 
@@ -96,6 +111,20 @@ void Track::checkCarCollision()
 			if (bottom)
 			{
 				m_car.push(Vector2f(0, 1));
+			}
+		}
+	}
+	for (std::shared_ptr<Checkpoint> cp : m_checkpoints)
+	{
+		for (Vector2f c : m_car.getColLines())
+		{
+			bool left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, cp->getPos().x, cp->getPos().y, cp->getPos().x, cp->getPos().y + cp->getBounds().height);
+			bool right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, cp->getPos().x + cp->getBounds().width, cp->getPos().y, cp->getPos().x + cp->getBounds().width, cp->getPos().y + cp->getBounds().height);
+			bool top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, cp->getPos().x, cp->getPos().y, cp->getPos().x + cp->getBounds().width, cp->getPos().y);
+			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, cp->getPos().x, cp->getPos().y + cp->getBounds().height, cp->getPos().x + cp->getBounds().width, cp->getPos().y + cp->getBounds().height);
+			if (left || right || top || bottom)
+			{
+				cp->setPassed(true);
 			}
 		}
 	}

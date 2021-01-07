@@ -3,7 +3,7 @@
 
 struct boundryData
 {
-	static const int MAX_ENTRIES = 20;
+	static const int MAX_ENTRIES = 18;
 	sf::Vector2f m_pos[MAX_ENTRIES] =
 	{
 		{30.0f,10.0f},
