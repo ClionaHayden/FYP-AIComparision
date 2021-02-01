@@ -1,6 +1,8 @@
 #include "Game.h"
 using namespace std;
 
+extern enum GameState s_gameState = GameState::MainMenu;
+
 Game::Game():
 	m_window{ sf::VideoMode{ 970 , 950 , 32 }, "FYP - AI Comparison" }
 {
@@ -40,9 +42,38 @@ void Game::processEvents()
 	}
 }
 
-void Game::processKeys(sf::Event t_event)
+void Game::processKeys(sf::Event& t_event)
 {
-	m_track.handleInput(t_event);
+	switch (s_gameState)
+	{
+	case GameState::MainMenu:
+		m_mainMenu.handleInput(t_event, m_window);
+		break;
+	case GameState::ChoiceScreen:
+		m_choiceScreen.handleInput(t_event, m_window);
+		break;
+	case GameState::TrainingDataCollection:
+		break;
+	case GameState::Reinforcement:
+		m_track.handleInput(t_event);
+		break;
+	case GameState::Backprop:
+		break;
+	case GameState::Success:
+		break;
+	case GameState::Fail:
+		break;
+	case GameState::Race:
+		break;
+	case GameState::Results:
+		break;
+	case GameState::Exit:
+		m_window.close();
+		break;
+	default:
+		break;
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
 		m_window.close();
@@ -51,12 +82,66 @@ void Game::processKeys(sf::Event t_event)
 
 void Game::update(sf::Time t_deltaTime)
 {
-	m_track.update(t_deltaTime);
+	switch (s_gameState)
+	{
+	case GameState::MainMenu:
+		m_mainMenu.update(t_deltaTime);
+		break;
+	case GameState::ChoiceScreen:
+		m_choiceScreen.update(t_deltaTime);
+		break;
+	case GameState::TrainingDataCollection:
+		break;
+	case GameState::Reinforcement:
+		m_track.update(t_deltaTime);
+		break;
+	case GameState::Backprop:
+		break;
+	case GameState::Success:
+		break;
+	case GameState::Fail:
+		break;
+	case GameState::Race:
+		break;
+	case GameState::Results:
+		break;
+	case GameState::Exit:
+		break;
+	default:
+		break;
+	}
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-	m_track.render(m_window);
+	switch (s_gameState)
+	{
+	case GameState::MainMenu:
+		m_mainMenu.render(m_window);
+		break;
+	case GameState::ChoiceScreen:
+		m_choiceScreen.render(m_window);
+		break;
+	case GameState::TrainingDataCollection:
+		break;
+	case GameState::Reinforcement:
+		m_track.render(m_window);
+		break;
+	case GameState::Backprop:
+		break;
+	case GameState::Success:
+		break;
+	case GameState::Fail:
+		break;
+	case GameState::Race:
+		break;
+	case GameState::Results:
+		break;
+	case GameState::Exit:
+		break;
+	default:
+		break;
+	}
 	m_window.display();
 }

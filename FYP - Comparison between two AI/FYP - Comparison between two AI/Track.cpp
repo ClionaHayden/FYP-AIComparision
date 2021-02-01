@@ -3,7 +3,7 @@
 
 Track::Track() :
 	m_drawBoundry{ false },
-	m_car{ Vector2f(90.0f, 350.0f), 0.0f },
+	m_car{ Vector2f(100.0f, 450.0f), 50.0f },
 	m_inputTimer{ sf::Time::Zero }
 {
 	setup();
@@ -98,18 +98,22 @@ void Track::checkCarCollision()
 			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height);
 			if (left)
 			{
+				m_car.collidesBoundary();
 				m_car.push(Vector2f(-1, 0));
 			}
 			if (right)
 			{
+				m_car.collidesBoundary();
 				m_car.push(Vector2f(1, 0));
 			}
 			if (top)
 			{
+				m_car.collidesBoundary();
 				m_car.push(Vector2f(0, -1));
 			}
 			if (bottom)
 			{
+				m_car.collidesBoundary();
 				m_car.push(Vector2f(0, 1));
 			}
 		}
@@ -124,7 +128,16 @@ void Track::checkCarCollision()
 			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, cp->getPos().x, cp->getPos().y + cp->getBounds().height, cp->getPos().x + cp->getBounds().width, cp->getPos().y + cp->getBounds().height);
 			if (left || right || top || bottom)
 			{
-				cp->setPassed(true);
+				if ((!cp->getPassed()) /*&& m_checkpoints.size() > m_car.getCpNum()*/)
+				{
+					m_car.collidesCheckpoint();
+					m_car.nextCP();
+					cp->setPassed(true);
+				}
+				else
+				{
+					m_car.collidesPassedCP();
+				}
 			}
 		}
 	}

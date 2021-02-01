@@ -142,19 +142,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boundry.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Checkpoint.cpp" />
+    <ClCompile Include="ChoiceScreen.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Reinforcement.cpp" />
     <ClCompile Include="Track.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boundry.h" />
     <ClInclude Include="BoundryData.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Car.h" />
     <ClInclude Include="Checkpoint.h" />
     <ClInclude Include="CheckpointData.h" />
+    <ClInclude Include="ChoiceScreen.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Reinforcement.h" />
     <ClInclude Include="Track.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

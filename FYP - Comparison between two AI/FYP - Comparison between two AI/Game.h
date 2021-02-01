@@ -4,6 +4,9 @@
 #include "SFML/Window.hpp"
 
 #include "Track.h"
+#include "GameState.h"
+#include "MainMenu.h"
+#include "ChoiceScreen.h"
 
 using namespace std;
 
@@ -20,12 +23,14 @@ public:
 private:
 
 	void processEvents();
-	void processKeys(sf::Event t_event);
+	void processKeys(sf::Event& t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
 
 	sf::RenderWindow m_window; 
 	Track m_track;
+	MainMenu m_mainMenu;
+	ChoiceScreen m_choiceScreen;
 };
 
 #endif // !GAME_HPP
