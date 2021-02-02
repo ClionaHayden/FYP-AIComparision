@@ -151,6 +151,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Reinforcement.cpp" />
     <ClCompile Include="Track.cpp" />
+    <ClCompile Include="TrainingInstructionsScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boundry.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Reinforcement.h" />
     <ClInclude Include="Track.h" />
+    <ClInclude Include="TrainingInstructionsScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

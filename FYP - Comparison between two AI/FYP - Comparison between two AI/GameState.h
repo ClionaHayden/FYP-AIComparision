@@ -5,6 +5,7 @@ enum class GameState
 {
 	MainMenu,
 	ChoiceScreen,
+	TrainingDataInstructions,
 	TrainingDataCollection,
 	Reinforcement,
 	Backprop,

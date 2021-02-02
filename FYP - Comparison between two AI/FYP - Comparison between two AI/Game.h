@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "MainMenu.h"
 #include "ChoiceScreen.h"
+#include "TrainingInstructionsScreen.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ private:
 	Track m_track;
 	MainMenu m_mainMenu;
 	ChoiceScreen m_choiceScreen;
+	TainingInstructionsScreen m_trainingInstructionsScreen;
 };
 
 #endif // !GAME_HPP

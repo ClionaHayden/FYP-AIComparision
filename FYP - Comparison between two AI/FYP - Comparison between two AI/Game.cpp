@@ -52,7 +52,11 @@ void Game::processKeys(sf::Event& t_event)
 	case GameState::ChoiceScreen:
 		m_choiceScreen.handleInput(t_event, m_window);
 		break;
+	case GameState::TrainingDataInstructions:
+		m_trainingInstructionsScreen.handleInput(t_event, m_window);
+		break;
 	case GameState::TrainingDataCollection:
+		m_track.handleInput(t_event);
 		break;
 	case GameState::Reinforcement:
 		m_track.handleInput(t_event);
@@ -90,7 +94,11 @@ void Game::update(sf::Time t_deltaTime)
 	case GameState::ChoiceScreen:
 		m_choiceScreen.update(t_deltaTime);
 		break;
+	case GameState::TrainingDataInstructions:
+		m_trainingInstructionsScreen.update(t_deltaTime);
+		break;
 	case GameState::TrainingDataCollection:
+		m_track.update(t_deltaTime);
 		break;
 	case GameState::Reinforcement:
 		m_track.update(t_deltaTime);
@@ -123,7 +131,11 @@ void Game::render()
 	case GameState::ChoiceScreen:
 		m_choiceScreen.render(m_window);
 		break;
+	case GameState::TrainingDataInstructions:
+		m_trainingInstructionsScreen.render(m_window);
+		break;
 	case GameState::TrainingDataCollection:
+		m_track.render(m_window);
 		break;
 	case GameState::Reinforcement:
 		m_track.render(m_window);

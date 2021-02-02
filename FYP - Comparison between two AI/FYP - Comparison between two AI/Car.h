@@ -4,6 +4,7 @@
 
 #include "Reinforcement.h"
 #include "CheckpointData.h"
+#include "GameState.h"
 
 using namespace sf;
 

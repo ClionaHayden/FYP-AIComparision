@@ -28,14 +28,17 @@ void Car::update(Time t_deltaTime)
 	m_sprite.setPosition(m_pos);
 	move(t_deltaTime);
 	updateColLines();
-	m_reinforcement.update(t_deltaTime);
-	if (!m_replay)
+	if (s_gameState == GameState::Reinforcement)
 	{
-		reinforcement();
-	}
-	else
-	{
-		replayLearning();
+		m_reinforcement.update(t_deltaTime);
+		if (!m_replay)
+		{
+			reinforcement();
+		}
+		else
+		{
+			replayLearning();
+		}
 	}
 }
 
@@ -142,8 +145,10 @@ void Car::setup()
 		vec = m_pos + vec;
 		m_collisionLines.push_back(vec);
 	}
-
-	m_reinforcement.addData(m_rotation, m_pos, m_speed);
+	if (s_gameState == GameState::Reinforcement)
+	{
+		m_reinforcement.addData(m_rotation, m_pos, m_speed);
+	}
 }
 
 void Car::move(Time t_deltaTime)
@@ -169,7 +174,10 @@ void Car::updateColLines()
 
 void Car::collidesBoundary()
 {
-	m_reinforcement.punish(500);
+	if (s_gameState == GameState::Reinforcement)
+	{
+		m_reinforcement.punish(500);
+	}
 }
 
 void Car::collidesPassedCP()
@@ -177,15 +185,21 @@ void Car::collidesPassedCP()
 	if (m_CPTimer > sf::seconds(1))
 	{
 		m_CPTimer = Time::Zero;
-		m_reinforcement.punish(500);
+		if (s_gameState == GameState::Reinforcement)
+		{
+			m_reinforcement.punish(500);
+		}
 	}
 }
 
 void Car::collidesCheckpoint()
 {
-	m_reinforcement.praise(200);
-	m_reinforcement.addData(m_rotation, m_pos + Vector2f(m_velocity.x * (m_speed / 2), m_velocity.y * (m_speed / 2)), m_speed);
-	m_pastDist = 1000;
+	if (s_gameState == GameState::Reinforcement)
+	{
+		m_reinforcement.praise(200);
+		m_reinforcement.addData(m_rotation, m_pos + Vector2f(m_velocity.x * (m_speed / 2), m_velocity.y * (m_speed / 2)), m_speed);
+		m_pastDist = 1000;
+	}
 }
 
 
