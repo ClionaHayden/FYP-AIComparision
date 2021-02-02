@@ -2,14 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-using namespace sf;
+#include "GameState.h"
 
-struct Data
-{
-	float m_rotation = 0.0f;
-	Vector2f m_position = Vector2f(0.0f,0.0f);
-	float m_speed = 0.0f;
-};
+using namespace sf;
 
 class ReinforcementLearning
 {

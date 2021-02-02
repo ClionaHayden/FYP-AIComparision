@@ -4,7 +4,7 @@
 
 #include "Reinforcement.h"
 #include "CheckpointData.h"
-#include "GameState.h"
+#include "BackProp.h"
 
 using namespace sf;
 
@@ -57,6 +57,8 @@ private:
 	void reinforcement();
 	bool m_replay;
 	int m_current;
+
+	Backprop m_backprop;
 
 	void setup();
 	void move(Time t_deltaTime);

@@ -1,5 +1,6 @@
 #pragma once
-
+#include "SFML/Graphics.hpp"
+using namespace sf;
 
 enum class GameState
 {
@@ -14,6 +15,13 @@ enum class GameState
 	Race,
 	Results,
 	Exit
+};
+
+struct Data
+{
+	float m_rotation;
+	sf::Vector2f m_position;
+	float m_speed;
 };
 
 extern GameState s_gameState;

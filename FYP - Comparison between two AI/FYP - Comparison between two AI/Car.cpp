@@ -65,28 +65,31 @@ void Car::handleInput(Event& e)
 	{
 		m_replay = true;
 	}
-	/*if(sf::Keyboard::A == e.key.code)
+	if (s_gameState == GameState::TrainingDataCollection)
 	{
-		m_rotation -= RATE_OF_ROTATION;
-	}
-	if (sf::Keyboard::D == e.key.code)
-	{
-		m_rotation += RATE_OF_ROTATION;
-	}
-	if (sf::Keyboard::W == e.key.code)
-	{
-		if (m_speed < MAX_ACCELERATION)
+		if(sf::Keyboard::A == e.key.code)
 		{
-			m_speed += RATE_OF_ACCELERATION;
+			m_rotation -= RATE_OF_ROTATION;
+		}
+		if (sf::Keyboard::D == e.key.code)
+		{
+			m_rotation += RATE_OF_ROTATION;
+		}
+		if (sf::Keyboard::W == e.key.code)
+		{
+			if (m_speed < MAX_ACCELERATION)
+			{
+				m_speed += RATE_OF_ACCELERATION;
+			}
+		}
+		if (sf::Keyboard::S == e.key.code)
+		{
+			if (m_speed > 0.0f)
+			{
+				m_speed -= RATE_OF_ACCELERATION;
+			}
 		}
 	}
-	if (sf::Keyboard::S == e.key.code)
-	{
-		if (m_speed > 0.0f)
-		{
-			m_speed -= RATE_OF_ACCELERATION;
-		}
-	}*/
 }
 
 void Car::reinforcement()
@@ -96,15 +99,6 @@ void Car::reinforcement()
 		m_reinforcement.setTimer(Time::Zero);
 
 		float distToCp = distance(m_pos, m_checkpoints.m_centres[m_cpNum]);
-	/*	if (distToCp < m_pastDist)
-		{
-			m_reinforcement.praise(1000);
-		}
-		else
-		{
-			m_reinforcement.punish(1000);
-		}*/
-		//m_reinforcement.setScore(m_reinforcement.getScore() + (1000 - distToCp));
 		if(m_reinforcement.getScore() < m_pastRscore)
 		{
 			m_pos = m_reinforcement.getData().back().m_position;
@@ -121,7 +115,6 @@ void Car::reinforcement()
 		else
 		{
 			m_pastDist = distToCp;
-			//m_reinforcement.addData(m_rotation, m_pos, m_speed);
 		}
 		m_pastRscore = m_reinforcement.getScore();
 	}
@@ -199,6 +192,14 @@ void Car::collidesCheckpoint()
 		m_reinforcement.praise(200);
 		m_reinforcement.addData(m_rotation, m_pos + Vector2f(m_velocity.x * (m_speed / 2), m_velocity.y * (m_speed / 2)), m_speed);
 		m_pastDist = 1000;
+	}
+	if (s_gameState == GameState::TrainingDataCollection)
+	{
+		Data temp;
+		temp.m_position = m_pos;
+		temp.m_rotation = m_rotation;
+		temp.m_speed = m_speed;
+		m_backprop.addTrainingData(temp);
 	}
 }
 
