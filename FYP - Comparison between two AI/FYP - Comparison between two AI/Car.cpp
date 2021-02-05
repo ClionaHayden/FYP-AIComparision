@@ -200,6 +200,11 @@ void Car::collidesCheckpoint()
 		temp.m_rotation = m_rotation;
 		temp.m_speed = m_speed;
 		m_backprop.addTrainingData(temp);
+		if (m_backprop.getTrainingData().size() >= CheckpointData::MAX_ENTRIES)
+		{
+			saveTrainingDataToFile();
+			s_gameState = GameState::Backprop;
+		}
 	}
 }
 
@@ -228,4 +233,16 @@ void Car::replayLearning()
 			m_current++;
 		}
 	}
+}
+
+void Car::saveTrainingDataToFile()
+{
+	std::ofstream myfile;
+	myfile.open("DATA/TrainingData.csv");
+	for (int i = 0; i < m_backprop.getTrainingData().size(); i++)
+	{
+		myfile << m_backprop.getTrainingData()[i].m_position.x << "," << m_backprop.getTrainingData()[i].m_position.y << "," <<
+			m_backprop.getTrainingData()[i].m_rotation << "," << m_backprop.getTrainingData()[i].m_speed << "\n";
+	}
+	myfile.close();
 }

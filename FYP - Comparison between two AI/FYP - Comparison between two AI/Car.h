@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <iostream>
+#include <fstream>
 
 #include "Reinforcement.h"
 #include "CheckpointData.h"
@@ -66,4 +67,5 @@ private:
 	Vector2f normalise(Vector2f t_vec);
 	float distance(Vector2f t_vec1, Vector2f t_vec2);
 	void replayLearning();
+	void saveTrainingDataToFile();
 };
