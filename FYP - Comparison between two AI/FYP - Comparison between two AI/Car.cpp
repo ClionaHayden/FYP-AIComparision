@@ -67,16 +67,20 @@ void Car::handleInput(Event& e)
 	}
 	if (s_gameState == GameState::TrainingDataCollection)
 	{
+		TrainingData temp;
 		if(sf::Keyboard::A == e.key.code)
 		{
 			m_rotation -= RATE_OF_ROTATION;
+			temp.left = true;
 		}
 		if (sf::Keyboard::D == e.key.code)
 		{
 			m_rotation += RATE_OF_ROTATION;
+			temp.right = true;
 		}
 		if (sf::Keyboard::W == e.key.code)
 		{
+			temp.up = true;
 			if (m_speed < MAX_ACCELERATION)
 			{
 				m_speed += RATE_OF_ACCELERATION;
@@ -84,11 +88,13 @@ void Car::handleInput(Event& e)
 		}
 		if (sf::Keyboard::S == e.key.code)
 		{
+			temp.down = true;
 			if (m_speed > 0.0f)
 			{
 				m_speed -= RATE_OF_ACCELERATION;
 			}
 		}
+		m_backprop.addTrainingData(temp);
 	}
 }
 
@@ -193,19 +199,6 @@ void Car::collidesCheckpoint()
 		m_reinforcement.addData(m_rotation, m_pos + Vector2f(m_velocity.x * (m_speed / 2), m_velocity.y * (m_speed / 2)), m_speed);
 		m_pastDist = 1000;
 	}
-	if (s_gameState == GameState::TrainingDataCollection)
-	{
-		Data temp;
-		temp.m_position = m_pos;
-		temp.m_rotation = m_rotation;
-		temp.m_speed = m_speed;
-		m_backprop.addTrainingData(temp);
-		if (m_backprop.getTrainingData().size() >= CheckpointData::MAX_ENTRIES)
-		{
-			saveTrainingDataToFile();
-			s_gameState = GameState::Backprop;
-		}
-	}
 }
 
 
@@ -241,8 +234,8 @@ void Car::saveTrainingDataToFile()
 	myfile.open("DATA/TrainingData.csv");
 	for (int i = 0; i < m_backprop.getTrainingData().size(); i++)
 	{
-		myfile << m_backprop.getTrainingData()[i].m_position.x << "," << m_backprop.getTrainingData()[i].m_position.y << "," <<
-			m_backprop.getTrainingData()[i].m_rotation << "," << m_backprop.getTrainingData()[i].m_speed << "\n";
+		myfile << m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," <<
+			m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "\n";
 	}
 	myfile.close();
 }

@@ -9,7 +9,7 @@ Backprop::~Backprop()
 {
 }
 
-void Backprop::addTrainingData(Data t_new)
+void Backprop::addTrainingData(TrainingData t_new)
 {
 	m_trainingData.push_back(t_new);
 }

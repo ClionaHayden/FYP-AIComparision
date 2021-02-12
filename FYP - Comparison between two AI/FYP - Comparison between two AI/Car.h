@@ -24,8 +24,11 @@ public:
 	void collidesBoundary();
 	void collidesPassedCP();
 	void collidesCheckpoint();
+	void saveTrainingDataToFile();
 	void nextCP() { m_cpNum++; };
 	int getCpNum() { return m_cpNum; };
+
+	Time m_CPTimer;
 
 private:
 	Sprite m_sprite;
@@ -52,7 +55,6 @@ private:
 
 	CheckpointData m_checkpoints;
 	int m_cpNum;
-	Time m_CPTimer;
 
 	ReinforcementLearning m_reinforcement;
 	void reinforcement();
@@ -67,5 +69,4 @@ private:
 	Vector2f normalise(Vector2f t_vec);
 	float distance(Vector2f t_vec1, Vector2f t_vec2);
 	void replayLearning();
-	void saveTrainingDataToFile();
 };

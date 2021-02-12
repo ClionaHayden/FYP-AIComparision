@@ -4,7 +4,8 @@
 Track::Track() :
 	m_drawBoundry{ false },
 	m_car{ Vector2f(100.0f, 450.0f), 50.0f },
-	m_inputTimer{ sf::Time::Zero }
+	m_inputTimer{ sf::Time::Zero },
+	m_lap{ false }
 {
 	setup();
 }
@@ -133,9 +134,21 @@ void Track::checkCarCollision()
 					m_car.collidesCheckpoint();
 					m_car.nextCP();
 					cp->setPassed(true);
+					if (cp == m_checkpoints[m_checkpoints.size() - 2]) 
+					{
+						m_lap = true;
+					}
 				}
 				else
 				{
+					if (s_gameState == GameState::TrainingDataCollection)
+					{
+						if (cp == m_checkpoints[0] && cp->getPassed() && m_lap == true)
+						{
+							m_car.saveTrainingDataToFile();
+							s_gameState = GameState::Success;
+						}
+					}
 					m_car.collidesPassedCP();
 				}
 			}

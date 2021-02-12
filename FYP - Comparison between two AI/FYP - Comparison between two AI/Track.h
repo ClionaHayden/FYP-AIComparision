@@ -32,6 +32,8 @@ private:
 
 	sf::Time m_inputTimer;
 
+	bool m_lap;
+
 	void setup();
 	void setupBoundries();
 	void setupCheckpoints();

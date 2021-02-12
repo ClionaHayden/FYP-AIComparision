@@ -11,10 +11,10 @@ class Backprop
 public:
 	Backprop();
 	~Backprop();
-	void addTrainingData(Data t_new);
-	vector<Data> getTrainingData() { return m_trainingData; };
+	void addTrainingData(TrainingData t_new);
+	vector<TrainingData> getTrainingData() { return m_trainingData; };
 private:
-	vector<Data> m_trainingData;
+	vector<TrainingData> m_trainingData;
 	vector<Data> m_backpropData;
 
 	void loadBPData();
