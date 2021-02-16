@@ -1,6 +1,16 @@
 import csv
+from random import seed
+from random import randrange
+import array as arr
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior() 
 
+seed(100)
 TrainingData = {}
+inputs = arr.array('d',[0, 0, 0, 0, 0])
+outputs = arr.array('d',[0, 0, 0, 0, 0])
+weights = arr.array('d')
+biases = arr.array('d')
 
 def loadTrainingData():
     with open('FYP - Comparison between two AI/FYP - Comparison between two AI/DATA/TrainingData.csv') as csv_file:
@@ -17,5 +27,19 @@ def writeData():
         for row in TrainingData:
           csv_writer.writerow([TrainingData[row]['left'], TrainingData[row]['right'], TrainingData[row]['up'],TrainingData[row]['down']])
 
+def setupWeightsBias():
+    i = 0
+    while i < 8:
+        i += 1
+        weights.append(randrange(-1,1))
+    i = 0
+    while i < 4:
+        i += 1
+        biases.append(randrange(-1,1))
+
+tf.placeholder(tf.float32, [None, 784])
+middle = 30
+w_1 = tf.Variable(tf.truncated_normal([784, middle]))
 loadTrainingData()
+setupWeightsBias()
 writeData()
