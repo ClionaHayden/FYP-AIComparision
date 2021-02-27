@@ -8,6 +8,7 @@
 #include "CheckpointData.h"
 #include "Checkpoint.h"
 #include "Car.h"
+#include "Brain.h"
 
 using namespace sf;
 
@@ -30,6 +31,9 @@ private:
 
 	Car m_car;
 
+	shared_ptr<Brain> m_brain;
+	vector<shared_ptr<float>> m_reinforcementInputs;
+
 	sf::Time m_inputTimer;
 
 	bool m_lap;
@@ -38,5 +42,6 @@ private:
 	void setupBoundries();
 	void setupCheckpoints();
 	void checkCarCollision();
-	bool lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
+	bool lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, int t_inputNum, bool t_addInput);
+	float lengthOfLine(Vector2f t_l1, Vector2f t_l2);
 };

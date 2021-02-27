@@ -6,6 +6,7 @@
 #include "Reinforcement.h"
 #include "CheckpointData.h"
 #include "BackProp.h"
+#include "Brain.h"
 
 using namespace sf;
 
@@ -20,8 +21,9 @@ public:
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
 	void push(Vector2f t_dir) { m_pos += t_dir; };
+	Sprite getSprite() { return m_sprite; }
 
-	void collidesBoundary();
+	void collidesBoundary(shared_ptr<Brain> t_brain);
 	void collidesPassedCP();
 	void collidesCheckpoint();
 	void saveTrainingDataToFile();
@@ -42,7 +44,7 @@ private:
 
 	std::vector<Vector2f> m_collisionLines;
 	const int MAX_COLLISIONS = 5;
-	const float COLLISION_RADIUS = 25;
+	const float COLLISION_RADIUS = 100;
 
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;

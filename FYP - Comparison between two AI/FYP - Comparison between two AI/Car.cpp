@@ -33,7 +33,7 @@ void Car::update(Time t_deltaTime)
 		m_reinforcement.update(t_deltaTime);
 		if (!m_replay)
 		{
-			reinforcement();
+			//reinforcement();
 		}
 		else
 		{
@@ -171,11 +171,11 @@ void Car::updateColLines()
 	}
 }
 
-void Car::collidesBoundary()
+void Car::collidesBoundary(shared_ptr<Brain> t_brain)
 {
 	if (s_gameState == GameState::Reinforcement)
 	{
-		m_reinforcement.punish(500);
+		t_brain->m_Reinforcementscore -= 10000;
 	}
 }
 
