@@ -17,10 +17,19 @@ Track::~Track()
 void Track::update(Time t_deltaTime)
 {
 	m_inputTimer += t_deltaTime;
-	m_car.update(t_deltaTime);
 	m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
 	checkCarCollision();
-	m_brain->Evaluate(m_reinforcementInputs);
+	pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_reinforcementInputs);
+	if (!eval.second)
+	{
+		vector<shared_ptr<float>> outputs = eval.first;
+		m_car.processOutputs(outputs);
+	}
+	else
+	{
+		m_car.reset();
+	}
+	m_car.update(t_deltaTime);
 }
 
 void Track::render(RenderWindow& t_window)

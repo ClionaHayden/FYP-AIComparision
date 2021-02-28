@@ -53,8 +53,9 @@ void Brain::init()
 	}
 }
 
-vector<shared_ptr<float>> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
+pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
 {
+	bool adjust = false;
 	// feed forward
 
 	// input to hidden 
@@ -69,6 +70,11 @@ vector<shared_ptr<float>> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
 		for (int a = 0; a < numHidden; a++)
 		{
 			hiddenVals[a] = (make_shared<float>(*hiddenVals[a] + (*t_inputs[a] * *weightsLayer1[i][a])));
+			//hiddenVals[a] = make_shared<float>(Sigmoid(*hiddenVals[a]));
+			//if (*hiddenVals[a] > 0.5)
+			//	hiddenVals[a] = make_shared<float>(1);
+			//else
+			//	hiddenVals[a] = make_shared<float>(0);
 		}
 	}
 
@@ -92,9 +98,10 @@ vector<shared_ptr<float>> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
 	}
 	if (m_Reinforcementscore < m_PastReinforcementscore)
 	{
+		adjust = true;
 		adjustWeights(t_inputs, hiddenVals);
 	}
-	return outputs;
+	return make_pair(outputs,adjust);
 }
 
 void Brain::adjustWeights(vector<shared_ptr<float>> t_inputs, vector<shared_ptr<float>> t_hidden)

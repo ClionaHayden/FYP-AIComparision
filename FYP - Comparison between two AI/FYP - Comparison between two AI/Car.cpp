@@ -12,7 +12,9 @@ Car::Car(Vector2f t_startPos, float t_startSpeed) :
 	m_replay(false),
 	m_current(0),
 	m_pastDist(1000),
-	m_CPTimer{Time::Zero}
+	m_CPTimer(Time::Zero),
+	m_restartPos(t_startPos),
+	m_restartSpeed(t_startSpeed)
 {
 	setup();
 }
@@ -25,7 +27,6 @@ void Car::update(Time t_deltaTime)
 {
 	m_CPTimer += t_deltaTime;
 	m_sprite.setRotation(m_rotation);
-	m_sprite.setPosition(m_pos);
 	move(t_deltaTime);
 	updateColLines();
 	if (s_gameState == GameState::Reinforcement)
@@ -70,29 +71,23 @@ void Car::handleInput(Event& e)
 		TrainingData temp;
 		if(sf::Keyboard::A == e.key.code)
 		{
-			m_rotation -= RATE_OF_ROTATION;
+			turnLeft();
 			temp.left = true;
 		}
 		if (sf::Keyboard::D == e.key.code)
 		{
-			m_rotation += RATE_OF_ROTATION;
+			turnRight();
 			temp.right = true;
 		}
 		if (sf::Keyboard::W == e.key.code)
 		{
 			temp.up = true;
-			if (m_speed < MAX_ACCELERATION)
-			{
-				m_speed += RATE_OF_ACCELERATION;
-			}
+			accelerate();
 		}
 		if (sf::Keyboard::S == e.key.code)
 		{
 			temp.down = true;
-			if (m_speed > 0.0f)
-			{
-				m_speed -= RATE_OF_ACCELERATION;
-			}
+			decelerate();
 		}
 		m_backprop.addTrainingData(temp);
 	}
@@ -228,6 +223,32 @@ void Car::replayLearning()
 	}
 }
 
+void Car::turnLeft()
+{
+	m_rotation -= RATE_OF_ROTATION;
+}
+
+void Car::turnRight()
+{
+	m_rotation += RATE_OF_ROTATION;
+}
+
+void Car::accelerate()
+{
+	if (m_speed < MAX_ACCELERATION)
+	{
+		m_speed += RATE_OF_ACCELERATION;
+	}
+}
+
+void Car::decelerate()
+{
+	if (m_speed > 0.0f)
+	{
+		m_speed -= RATE_OF_ACCELERATION;
+	}
+}
+
 void Car::saveTrainingDataToFile()
 {
 	std::ofstream myfile;
@@ -238,4 +259,37 @@ void Car::saveTrainingDataToFile()
 			m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "\n";
 	}
 	myfile.close();
+}
+
+void Car::processOutputs(vector<shared_ptr<float>> t_outputs)
+{
+	if (*t_outputs.at(0) == 1.0f)
+	{
+		turnLeft();
+	}
+	if (*t_outputs.at(1) == 1.0f)
+	{
+		turnRight();
+	}
+	if (*t_outputs.at(2) == 1.0f)
+	{
+		accelerate();
+	}
+	if (*t_outputs.at(3) == 1.0f)
+	{
+		decelerate();
+	}
+	if (*t_outputs.at(4) == 1.0f)
+	{
+		//do nothing
+	}
+}
+
+void Car::reset()
+{
+	m_pos = m_restartPos;
+	m_rotation = 10.0f;
+	m_speed = m_restartSpeed;
+	m_velocity = Vector2f(1.0f, 0.0f);
+	m_cpNum = 0;
 }

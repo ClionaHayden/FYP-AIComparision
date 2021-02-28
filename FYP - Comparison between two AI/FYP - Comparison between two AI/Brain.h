@@ -19,7 +19,7 @@ public:
 	vector<shared_ptr<float>> outputs;
 	shared_ptr<float> biases;
 
-	float m_learningRate = 0.1;
+	float m_learningRate = 0.5;
 	float m_forgetRate = 0.05;
 
 	bool useBiases = false;
@@ -30,7 +30,7 @@ public:
 	~Brain();
 	void init();
 
-	vector<shared_ptr<float>> Evaluate(vector<shared_ptr<float>> t_inputs);
+	pair<vector<shared_ptr<float>>,bool> Evaluate(vector<shared_ptr<float>> t_inputs);
 	void adjustWeights(vector<shared_ptr<float>> t_inputs, vector<shared_ptr<float>> t_hidden);
 	float Sigmoid(float z);
 };

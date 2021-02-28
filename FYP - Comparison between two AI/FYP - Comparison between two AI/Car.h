@@ -29,6 +29,8 @@ public:
 	void saveTrainingDataToFile();
 	void nextCP() { m_cpNum++; };
 	int getCpNum() { return m_cpNum; };
+	void processOutputs(vector<shared_ptr<float>> t_outputs);
+	void reset();
 
 	Time m_CPTimer;
 
@@ -37,6 +39,8 @@ private:
 	Texture m_tex;
 
 	Vector2f m_pos;
+	Vector2f m_restartPos;
+	float m_restartSpeed;
 	double m_rotation;
 	float m_speed;
 	Vector2f m_velocity;
@@ -71,4 +75,8 @@ private:
 	Vector2f normalise(Vector2f t_vec);
 	float distance(Vector2f t_vec1, Vector2f t_vec2);
 	void replayLearning();
+	void turnLeft();
+	void turnRight();
+	void accelerate();
+	void decelerate();
 };
