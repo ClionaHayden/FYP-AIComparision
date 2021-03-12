@@ -63,6 +63,7 @@ void MainMenu::checkButtonPress()
 		if (m_buttons[1].getButtonState() == ButtonState::Clicked)
 		{
 			m_clickTimer = Time::Zero;
+			s_gameState = GameState::LoadWeights;
 		}
 		//exit
 		if (m_buttons[2].getButtonState() == ButtonState::Clicked)

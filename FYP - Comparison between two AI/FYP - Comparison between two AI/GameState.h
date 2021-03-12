@@ -14,7 +14,8 @@ enum class GameState
 	Fail,
 	Race,
 	Results,
-	Exit
+	Exit,
+	LoadWeights
 };
 
 struct Data
@@ -26,6 +27,11 @@ struct Data
 
 struct TrainingData
 {
+	int leftLen = 0;
+	int topLeftLen = 0;
+	int topLen = 0;
+	int topRightLen = 0;
+	int rightLen = 0;
 	bool left = false;
 	bool right = false;
 	bool up = false;

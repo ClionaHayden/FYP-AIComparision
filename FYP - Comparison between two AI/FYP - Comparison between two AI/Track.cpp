@@ -19,15 +19,18 @@ void Track::update(Time t_deltaTime)
 	m_inputTimer += t_deltaTime;
 	m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
 	checkCarCollision();
-	pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_reinforcementInputs);
-	if (!eval.second)
+	if (s_gameState == GameState::LoadWeights || s_gameState == GameState::Reinforcement)
 	{
-		vector<shared_ptr<float>> outputs = eval.first;
-		m_car.processOutputs(outputs);
-	}
-	else
-	{
-		m_car.reset();
+		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_reinforcementInputs);
+		if (!eval.second)
+		{
+			vector<shared_ptr<float>> outputs = eval.first;
+			m_car.processOutputs(outputs);
+		}
+		else
+		{
+			m_car.reset();
+		}
 	}
 	m_car.update(t_deltaTime);
 }
@@ -51,7 +54,7 @@ void Track::render(RenderWindow& t_window)
 
 void Track::handleInput(Event& e)
 {
-	m_car.handleInput(e);
+	m_car.handleInput(e,m_reinforcementInputs);
 	if (m_inputTimer.asSeconds() > 0.1)
 	{
 		if (sf::Keyboard::B == e.key.code)

@@ -74,6 +74,8 @@ void Game::processKeys(sf::Event& t_event)
 	case GameState::Exit:
 		m_window.close();
 		break;
+	case GameState::LoadWeights:
+		break;
 	default:
 		break;
 	}
@@ -115,6 +117,9 @@ void Game::update(sf::Time t_deltaTime)
 		break;
 	case GameState::Exit:
 		break;
+	case GameState::LoadWeights:
+		m_track.update(t_deltaTime);
+		break;
 	default:
 		break;
 	}
@@ -151,6 +156,9 @@ void Game::render()
 	case GameState::Results:
 		break;
 	case GameState::Exit:
+		break;
+	case GameState::LoadWeights:
+		m_track.render(m_window);
 		break;
 	default:
 		break;

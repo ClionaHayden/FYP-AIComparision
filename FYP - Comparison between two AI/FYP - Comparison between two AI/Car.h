@@ -17,7 +17,7 @@ public:
 	~Car();
 	void update(Time t_deltaTime);
 	void render(RenderWindow& t_window,bool t_debug);
-	void handleInput(Event& e);
+	void handleInput(Event& e, vector<shared_ptr<float>> t_inputs);
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
 	void push(Vector2f t_dir) { m_pos += t_dir; };
@@ -31,6 +31,7 @@ public:
 	int getCpNum() { return m_cpNum; };
 	void processOutputs(vector<shared_ptr<float>> t_outputs);
 	void reset();
+	void setColLineLength(vector<float> t_lengths);
 
 	Time m_CPTimer;
 
@@ -49,6 +50,7 @@ private:
 	std::vector<Vector2f> m_collisionLines;
 	const int MAX_COLLISIONS = 5;
 	const float COLLISION_RADIUS = 100;
+	float collLineLengths[5];
 
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;

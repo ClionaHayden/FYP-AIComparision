@@ -4,6 +4,10 @@
 #include <cstdlib>
 #include <memory>
 #include <vector>
+#include <fstream>
+#include <sstream>
+
+#include "GameState.h"
 
 using namespace std;
 
@@ -11,8 +15,8 @@ class Brain
 {
 public:
 	const int numInputs = 5;
-	const int numHidden = 5;
-	const int numOutputs = 5;
+	const int numHidden = 4;
+	const int numOutputs = 4;
 
 	vector<vector<shared_ptr<float>>> weightsLayer1;	// From inputs to hidden layer
 	vector<vector<shared_ptr<float>>>  weightsLayer2;	// From hidden layer to output neuron
@@ -26,6 +30,8 @@ public:
 	int m_Reinforcementscore;
 	int m_PastReinforcementscore;
 
+	std::ifstream weightsFile;
+
 	Brain();
 	~Brain();
 	void init();
@@ -33,4 +39,12 @@ public:
 	pair<vector<shared_ptr<float>>,bool> Evaluate(vector<shared_ptr<float>> t_inputs);
 	void adjustWeights(vector<shared_ptr<float>> t_inputs, vector<shared_ptr<float>> t_hidden);
 	float Sigmoid(float z);
+
+private:
+	pair<vector<shared_ptr<float>>, bool> reinforcement(vector<shared_ptr<float>> t_inputs);
+	void loadWeights();
+	vector<shared_ptr<float>> backprop(vector<shared_ptr<float>> t_inputs);
+
+	void SoftMax(float data[], int len);
+	float ReLu(float val);
 };

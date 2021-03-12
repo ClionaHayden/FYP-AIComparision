@@ -60,7 +60,7 @@ void Car::render(RenderWindow& t_window, bool t_debug)
 	}
 }
 
-void Car::handleInput(Event& e)
+void Car::handleInput(Event& e, vector<shared_ptr<float>> t_inputs)
 {
 	if (Keyboard::isKeyPressed(Keyboard::R))
 	{
@@ -69,6 +69,11 @@ void Car::handleInput(Event& e)
 	if (s_gameState == GameState::TrainingDataCollection)
 	{
 		TrainingData temp;
+		temp.leftLen = *t_inputs.at(0);
+		temp.topLeftLen = *t_inputs.at(1);
+		temp.topLen = *t_inputs.at(2);
+		temp.topRightLen = *t_inputs.at(3);
+		temp.rightLen = *t_inputs.at(4);
 		if(sf::Keyboard::A == e.key.code)
 		{
 			turnLeft();
@@ -255,8 +260,9 @@ void Car::saveTrainingDataToFile()
 	myfile.open("DATA/TrainingData.csv");
 	for (int i = 0; i < m_backprop.getTrainingData().size(); i++)
 	{
-		myfile << m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," <<
-			m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "\n";
+		myfile << m_backprop.getTrainingData()[i].leftLen << "," <<  m_backprop.getTrainingData()[i].topLeftLen << "," << m_backprop.getTrainingData()[i].topLen << ","
+			<< m_backprop.getTrainingData()[i].topRightLen << "," << m_backprop.getTrainingData()[i].rightLen << "," << m_backprop.getTrainingData()[i].left << ","
+			<< m_backprop.getTrainingData()[i].right<< "," << m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down  << "\n";
 	}
 	myfile.close();
 }
@@ -279,10 +285,6 @@ void Car::processOutputs(vector<shared_ptr<float>> t_outputs)
 	{
 		decelerate();
 	}
-	if (*t_outputs.at(4) == 1.0f)
-	{
-		//do nothing
-	}
 }
 
 void Car::reset()
@@ -292,4 +294,12 @@ void Car::reset()
 	m_speed = m_restartSpeed;
 	m_velocity = Vector2f(1.0f, 0.0f);
 	m_cpNum = 0;
+}
+
+void Car::setColLineLength(vector<float> t_lengths)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		collLineLengths[i] = t_lengths.at(i);
+	}
 }
