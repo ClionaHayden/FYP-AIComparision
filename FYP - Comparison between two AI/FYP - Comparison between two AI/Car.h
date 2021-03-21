@@ -49,7 +49,7 @@ private:
 
 	std::vector<Vector2f> m_collisionLines;
 	const int MAX_COLLISIONS = 5;
-	const float COLLISION_RADIUS = 100;
+	const float COLLISION_RADIUS = 200;
 	float collLineLengths[5];
 
 	const float RATE_OF_ROTATION = 5.0f;

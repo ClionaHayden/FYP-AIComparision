@@ -163,7 +163,7 @@ void Brain::loadWeights()
 	while (!weightsFile.eof())
 	{
 		//layer 1
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			row.clear();
 			getline(weightsFile, line);

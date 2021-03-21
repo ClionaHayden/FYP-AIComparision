@@ -27,11 +27,16 @@ struct Data
 
 struct TrainingData
 {
-	int leftLen = 0;
-	int topLeftLen = 0;
-	int topLen = 0;
-	int topRightLen = 0;
-	int rightLen = 0;
+	float x1 = 0;
+	float y1 = 0;
+	float x2 = 0;
+	float y2 = 0;
+	float x3 = 0;
+	float y3 = 0;
+	float x4 = 0;
+	float y4 = 0;
+	float x5 = 0;
+	float y5 = 0;
 	bool left = false;
 	bool right = false;
 	bool up = false;

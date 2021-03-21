@@ -8,16 +8,16 @@ import os
 import csv
 
 dataset = loadtxt('DATA/TrainingData.csv', delimiter=',')
-X = dataset[:,0:5]
-y = dataset[:,5:10]
+X = dataset[:,0:10]
+y = dataset[:,10:15]
 
 model = Sequential()
-model.add(Dense(4, input_dim=5, activation='relu'))
+model.add(Dense(4, input_dim=10, activation='relu'))
 model.add(Dense(4, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, y, epochs=100, batch_size=300)
+model.fit(X, y, epochs=100, batch_size=1000)
 
 _, accuracy = model.evaluate(X, y)
 print('Accuracy: %.2f' % (accuracy*100))
