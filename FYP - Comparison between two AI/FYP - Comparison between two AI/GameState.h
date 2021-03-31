@@ -31,12 +31,6 @@ struct TrainingData
 	float y1 = 0;
 	float x2 = 0;
 	float y2 = 0;
-	float x3 = 0;
-	float y3 = 0;
-	float x4 = 0;
-	float y4 = 0;
-	float x5 = 0;
-	float y5 = 0;
 	bool left = false;
 	bool right = false;
 	bool up = false;

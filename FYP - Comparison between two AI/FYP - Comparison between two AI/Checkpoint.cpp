@@ -32,6 +32,10 @@ void Checkpoint::draw(RenderWindow& t_win)
 		{
 			m_checkpoint.setFillColor(sf::Color::Blue);
 		}
+		else
+		{
+			m_checkpoint.setFillColor(sf::Color::Green);
+		}
 		t_win.draw(m_checkpoint);
 	}
 }

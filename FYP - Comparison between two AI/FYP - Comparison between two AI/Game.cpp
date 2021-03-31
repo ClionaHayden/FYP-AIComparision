@@ -75,6 +75,7 @@ void Game::processKeys(sf::Event& t_event)
 		m_window.close();
 		break;
 	case GameState::LoadWeights:
+		m_track.handleInput(t_event);
 		break;
 	default:
 		break;

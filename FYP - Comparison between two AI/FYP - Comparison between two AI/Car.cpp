@@ -31,7 +31,7 @@ void Car::update(Time t_deltaTime)
 	updateColLines();
 	if (s_gameState == GameState::Reinforcement)
 	{
-		m_reinforcement.update(t_deltaTime);
+		//m_reinforcement.update(t_deltaTime);
 		if (!m_replay)
 		{
 			//reinforcement();
@@ -60,7 +60,7 @@ void Car::render(RenderWindow& t_window, bool t_debug)
 	}
 }
 
-void Car::handleInput(Event& e, vector<shared_ptr<float>> t_inputs)
+void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 {
 	if (Keyboard::isKeyPressed(Keyboard::R))
 	{
@@ -73,61 +73,27 @@ void Car::handleInput(Event& e, vector<shared_ptr<float>> t_inputs)
 		temp.y1 = *t_inputs.at(1);
 		temp.x2 = *t_inputs.at(2);
 		temp.y2 = *t_inputs.at(3);
-		temp.x3 = *t_inputs.at(4);
-		temp.y3 = *t_inputs.at(5);
-		temp.x4 = *t_inputs.at(6);
-		temp.y4 = *t_inputs.at(7);
-		temp.x5 = *t_inputs.at(8);
-		temp.y5 = *t_inputs.at(9);
-		if(sf::Keyboard::A == e.key.code)
+		if(Keyboard::isKeyPressed(Keyboard::A))
 		{
 			turnLeft();
 			temp.left = true;
 		}
-		if (sf::Keyboard::D == e.key.code)
+		if (Keyboard::isKeyPressed(Keyboard::D))
 		{
 			turnRight();
 			temp.right = true;
 		}
-		if (sf::Keyboard::W == e.key.code)
+		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
 			temp.up = true;
 			accelerate();
 		}
-		if (sf::Keyboard::S == e.key.code)
+		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
 			temp.down = true;
 			decelerate();
 		}
 		m_backprop.addTrainingData(temp);
-	}
-}
-
-void Car::reinforcement()
-{
-	if (m_reinforcement.getTimer() >= seconds(0.5f))
-	{
-		m_reinforcement.setTimer(Time::Zero);
-
-		float distToCp = distance(m_pos, m_checkpoints.m_centres[m_cpNum]);
-		if(m_reinforcement.getScore() < m_pastRscore)
-		{
-			m_pos = m_reinforcement.getData().back().m_position;
-			m_rotation = m_reinforcement.getData().back().m_rotation;
-			m_speed = m_reinforcement.getData().back().m_speed;
-			m_speed = m_speed + ((rand() % (int)MAX_ACCELERATION) - (MAX_ACCELERATION / 2));
-			if (m_speed > MAX_ACCELERATION)
-				m_speed = MAX_ACCELERATION;
-			if (m_speed < MIN_ACCELERATION)
-				m_speed = MIN_ACCELERATION;
-			m_rotation = (rand() % 180 - 90.0) + m_rotation;
-			m_reinforcement.setScore(m_pastRscore);
-		}
-		else
-		{
-			m_pastDist = distToCp;
-		}
-		m_pastRscore = m_reinforcement.getScore();
 	}
 }
 
@@ -267,9 +233,7 @@ void Car::saveTrainingDataToFile()
 	{
 		myfile << m_backprop.getTrainingData()[i].x1 << "," <<  m_backprop.getTrainingData()[i].y1 
 			<< "," << m_backprop.getTrainingData()[i].x2 << ","<< m_backprop.getTrainingData()[i].y2
-			<< "," << m_backprop.getTrainingData()[i].x3 << "," << m_backprop.getTrainingData()[i].y3 << "," 
-			<< m_backprop.getTrainingData()[i].x4 << "," << m_backprop.getTrainingData()[i].y4 << ","
-			<< m_backprop.getTrainingData()[i].x5 << "," << m_backprop.getTrainingData()[i].y5 << "," 
+			<< "," 
 			<< m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," 
 			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down  << "\n";
 	}
@@ -302,7 +266,7 @@ void Car::reset()
 	m_rotation = 10.0f;
 	m_speed = m_restartSpeed;
 	m_velocity = Vector2f(1.0f, 0.0f);
-	m_cpNum = 0;
+	//m_cpNum = 0;
 }
 
 void Car::setColLineLength(vector<float> t_lengths)

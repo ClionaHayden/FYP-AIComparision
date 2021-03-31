@@ -33,11 +33,12 @@ private:
 	Car m_car;
 
 	shared_ptr<Brain> m_brain;
-	vector<shared_ptr<float>> m_reinforcementInputs;
+	vector<shared_ptr<float>> m_inputs;
 
 	sf::Time m_inputTimer;
 
 	bool m_lap;
+	int m_lapNum;
 
 	void setup();
 	void setupBoundries();
@@ -45,4 +46,5 @@ private:
 	void checkCarCollision();
 	bool lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, int t_inputNum1, int t_inputNum2, int t_circNum, bool t_addInput);
 	float lengthOfLine(Vector2f t_l1, Vector2f t_l2);
+	bool rectCollision(FloatRect t_rect1, FloatRect t_rect2, Vector2f t_pos1, Vector2f t_pos2);
 };

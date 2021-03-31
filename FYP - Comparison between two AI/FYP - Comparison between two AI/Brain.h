@@ -14,8 +14,8 @@ using namespace std;
 class Brain
 {
 public:
-	const int numInputs = 10;
-	const int numHidden = 4;
+	const int numInputs = 4;
+	const int numHidden = 5;
 	const int numOutputs = 4;
 
 	vector<vector<shared_ptr<float>>> weightsLayer1;	// From inputs to hidden layer

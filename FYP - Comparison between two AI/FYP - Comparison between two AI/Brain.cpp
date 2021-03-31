@@ -63,7 +63,7 @@ pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> 
 	else if (s_gameState == GameState::LoadWeights)
 	{
 		loadWeights();
-		backprop(t_inputs);
+		outputs = backprop(t_inputs);
 	}
 	return make_pair(outputs, adjust);
 }
@@ -163,7 +163,7 @@ void Brain::loadWeights()
 	while (!weightsFile.eof())
 	{
 		//layer 1
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			row.clear();
 			getline(weightsFile, line);
@@ -180,13 +180,13 @@ void Brain::loadWeights()
 				index = index + 1;
 			}
 		}
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			getline(weightsFile, line);
 			//ignore biases
 		}
 		// layer 2
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			row.clear();
 			getline(weightsFile, line);
@@ -245,11 +245,37 @@ vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
 			result += product;
 		}
 		result = Sigmoid(result);
-		if (result > 0.5)
-			result = 1;
-		else
-			result = 0;
 		temp.push_back(make_shared<float>(result));
+		result = 0.0f;
+	}
+
+	//float threshold = 0.52f;
+	//if (*temp[0] > threshold || *temp[0] > threshold)
+	{
+		if (temp[0] > temp[1]) // left or right
+		{
+			temp[0] = make_shared<float>(1.0f);
+			temp[1] = make_shared<float>(0.0f);
+		}
+		else
+		{
+			temp[1] = make_shared<float>(1.0f);
+			temp[0] = make_shared<float>(0.0f);
+		}
+	}
+
+	//if (*temp[2] > threshold || *temp[3] > threshold)
+	{
+		if (temp[2] > temp[3]) // accel or decel
+		{
+			temp[2] = make_shared<float>(1.0f);
+			temp[3] = make_shared<float>(0.0f);
+		}
+		else
+		{
+			temp[2] = make_shared<float>(1.0f);
+			temp[3] = make_shared<float>(0.0f);
+		}
 	}
 
 	return temp;

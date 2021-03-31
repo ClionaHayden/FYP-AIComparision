@@ -17,17 +17,19 @@ public:
 	~Car();
 	void update(Time t_deltaTime);
 	void render(RenderWindow& t_window,bool t_debug);
-	void handleInput(Event& e, vector<shared_ptr<float>> t_inputs);
+	void handleInput(vector<shared_ptr<float>> t_inputs);
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
 	void push(Vector2f t_dir) { m_pos += t_dir; };
 	Sprite getSprite() { return m_sprite; }
+	FloatRect getBounds() { return m_sprite.getGlobalBounds(); };
 
 	void collidesBoundary(shared_ptr<Brain> t_brain);
 	void collidesPassedCP();
 	void collidesCheckpoint();
 	void saveTrainingDataToFile();
 	void nextCP() { m_cpNum++; };
+	void setCPNum(int t_new) { m_cpNum = t_new; };
 	int getCpNum() { return m_cpNum; };
 	void processOutputs(vector<shared_ptr<float>> t_outputs);
 	void reset();
@@ -65,7 +67,6 @@ private:
 	int m_cpNum;
 
 	ReinforcementLearning m_reinforcement;
-	void reinforcement();
 	bool m_replay;
 	int m_current;
 
