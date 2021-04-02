@@ -203,7 +203,7 @@ void Brain::loadWeights()
 				index = index + 1;
 			}
 		}
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			getline(weightsFile, line);
 			//ignore bias
@@ -249,8 +249,8 @@ vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
 		result = 0.0f;
 	}
 
-	//float threshold = 0.52f;
-	//if (*temp[0] > threshold || *temp[0] > threshold)
+	if(temp[4] < temp[0] && temp[4] < temp[1] &&
+		temp[4] < temp[2] && temp[4] < temp[3])
 	{
 		if (temp[0] > temp[1]) // left or right
 		{
@@ -262,10 +262,6 @@ vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
 			temp[1] = make_shared<float>(1.0f);
 			temp[0] = make_shared<float>(0.0f);
 		}
-	}
-
-	//if (*temp[2] > threshold || *temp[3] > threshold)
-	{
 		if (temp[2] > temp[3]) // accel or decel
 		{
 			temp[2] = make_shared<float>(1.0f);

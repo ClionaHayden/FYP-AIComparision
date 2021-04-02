@@ -9,15 +9,15 @@ import csv
 
 dataset = loadtxt('DATA/TrainingData.csv', delimiter=',')
 X = dataset[:,0:4]
-y = dataset[:,4:8]
+y = dataset[:,4:9]
 
 model = Sequential()
 model.add(Dense(5, input_dim=4, activation='relu'))
-model.add(Dense(4, activation='sigmoid'))
+model.add(Dense(5, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(X, y, epochs=10, batch_size=1000)
+model.fit(X, y, epochs=10, batch_size=500)
 
 _, accuracy = model.evaluate(X, y)
 print('Accuracy: %.2f' % (accuracy*100))

@@ -186,7 +186,7 @@ void Track::checkCarCollision()
 			m_car.setCPNum(0);
 			m_lapNum++;
 		}
-		if (m_lapNum == 5)
+		if (m_lapNum == 3)
 		{
 			if (s_gameState == GameState::TrainingDataCollection)
 			{

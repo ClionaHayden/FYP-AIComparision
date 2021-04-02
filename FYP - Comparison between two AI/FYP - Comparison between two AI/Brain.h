@@ -16,7 +16,7 @@ class Brain
 public:
 	const int numInputs = 4;
 	const int numHidden = 5;
-	const int numOutputs = 4;
+	const int numOutputs = 5;
 
 	vector<vector<shared_ptr<float>>> weightsLayer1;	// From inputs to hidden layer
 	vector<vector<shared_ptr<float>>>  weightsLayer2;	// From hidden layer to output neuron

@@ -73,24 +73,29 @@ void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 		temp.y1 = *t_inputs.at(1);
 		temp.x2 = *t_inputs.at(2);
 		temp.y2 = *t_inputs.at(3);
+		temp.none = true;
 		if(Keyboard::isKeyPressed(Keyboard::A))
 		{
 			turnLeft();
+			temp.none = false;
 			temp.left = true;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::D))
 		{
 			turnRight();
+			temp.none = false;
 			temp.right = true;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
 			temp.up = true;
+			temp.none = false;
 			accelerate();
 		}
 		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
 			temp.down = true;
+			temp.none = false;
 			decelerate();
 		}
 		m_backprop.addTrainingData(temp);
@@ -235,7 +240,8 @@ void Car::saveTrainingDataToFile()
 			<< "," << m_backprop.getTrainingData()[i].x2 << ","<< m_backprop.getTrainingData()[i].y2
 			<< "," 
 			<< m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," 
-			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down  << "\n";
+			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "," 
+			<< m_backprop.getTrainingData()[i].none << "\n";
 	}
 	myfile.close();
 }

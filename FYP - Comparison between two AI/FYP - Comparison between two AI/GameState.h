@@ -35,6 +35,7 @@ struct TrainingData
 	bool right = false;
 	bool up = false;
 	bool down = false;
+	bool none = false;
 };
 
 extern GameState s_gameState;
