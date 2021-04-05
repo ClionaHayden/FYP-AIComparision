@@ -151,7 +151,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="Reinforcement.cpp" />
     <ClCompile Include="Track.cpp" />
     <ClCompile Include="TrainingInstructionsScreen.cpp" />
   </ItemGroup>
@@ -168,7 +167,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Reinforcement.h" />
     <ClInclude Include="Track.h" />
     <ClInclude Include="TrainingInstructionsScreen.h" />
   </ItemGroup>

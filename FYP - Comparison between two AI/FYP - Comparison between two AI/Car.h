@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "Reinforcement.h"
 #include "CheckpointData.h"
 #include "BackProp.h"
 #include "Brain.h"
@@ -66,7 +65,6 @@ private:
 	CheckpointData m_checkpoints;
 	int m_cpNum;
 
-	ReinforcementLearning m_reinforcement;
 	bool m_replay;
 	int m_current;
 

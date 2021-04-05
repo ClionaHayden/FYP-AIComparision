@@ -41,6 +41,7 @@ private:
 	int m_lapNum;
 
 	void setup();
+	int calculateReinforcmentScore();
 	void setupBoundries();
 	void setupCheckpoints();
 	void checkCarCollision();

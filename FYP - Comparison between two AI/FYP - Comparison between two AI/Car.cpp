@@ -6,7 +6,6 @@ Car::Car(Vector2f t_startPos, float t_startSpeed) :
 	m_speed(t_startSpeed),
 	m_rotation(10.0f),
 	m_velocity(1.0f, 0.0f),
-	m_reinforcement(Time::Zero),
 	m_pastRscore(-100),
 	m_cpNum(0),
 	m_replay(false),
@@ -120,10 +119,6 @@ void Car::setup()
 		vec = m_pos + vec;
 		m_collisionLines.push_back(vec);
 	}
-	if (s_gameState == GameState::Reinforcement)
-	{
-		m_reinforcement.addData(m_rotation, m_pos, m_speed);
-	}
 }
 
 void Car::move(Time t_deltaTime)
@@ -160,10 +155,6 @@ void Car::collidesPassedCP()
 	if (m_CPTimer > sf::seconds(1))
 	{
 		m_CPTimer = Time::Zero;
-		if (s_gameState == GameState::Reinforcement)
-		{
-			m_reinforcement.punish(500);
-		}
 	}
 }
 
@@ -171,9 +162,6 @@ void Car::collidesCheckpoint()
 {
 	if (s_gameState == GameState::Reinforcement)
 	{
-		m_reinforcement.praise(200);
-		m_reinforcement.addData(m_rotation, m_pos + Vector2f(m_velocity.x * (m_speed / 2), m_velocity.y * (m_speed / 2)), m_speed);
-		m_pastDist = 1000;
 	}
 }
 
@@ -191,17 +179,6 @@ float Car::distance(Vector2f t_vec1, Vector2f t_vec2)
 
 void Car::replayLearning()
 {
-	if (m_reinforcement.getTimer() >= seconds(0.5f))
-	{
-		m_reinforcement.setTimer(Time::Zero);
-		m_pos = m_reinforcement.getData()[m_current].m_position;
-		m_speed = m_reinforcement.getData()[m_current].m_speed;
-		m_rotation = m_reinforcement.getData()[m_current].m_rotation;
-		if (m_current < m_reinforcement.getData().size() - 1)
-		{
-			m_current++;
-		}
-	}
 }
 
 void Car::turnLeft()
@@ -272,7 +249,7 @@ void Car::reset()
 	m_rotation = 10.0f;
 	m_speed = m_restartSpeed;
 	m_velocity = Vector2f(1.0f, 0.0f);
-	//m_cpNum = 0;
+	m_cpNum = 0;
 }
 
 void Car::setColLineLength(vector<float> t_lengths)

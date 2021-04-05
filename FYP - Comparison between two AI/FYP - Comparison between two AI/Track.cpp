@@ -29,21 +29,36 @@ void Track::update(Time t_deltaTime)
 
 	m_inputTimer += t_deltaTime;
 	//m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
-	checkCarCollision();
-	if (s_gameState == GameState::LoadWeights || s_gameState == GameState::Reinforcement)
+	if (s_gameState == GameState::LoadWeights)
 	{
 		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs);
 		if (!eval.second)
 		{
 			vector<shared_ptr<float>> outputs = eval.first;
 			m_car.processOutputs(outputs);
+			m_car.update(t_deltaTime);
 		}
 		else
 		{
 			m_car.reset();
 		}
 	}
-	m_car.update(t_deltaTime);
+	else if (s_gameState == GameState::Reinforcement)
+	{
+		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs);
+		vector<shared_ptr<float>> outputs = eval.first;
+		m_car.processOutputs(outputs);
+		m_car.update(t_deltaTime);
+		m_brain->m_Reinforcementscore = calculateReinforcmentScore();
+		if (m_brain->m_PastReinforcementscore < m_brain->m_Reinforcementscore)
+		{
+			m_brain->adjustWeights(outputs);
+			m_car.reset();
+			m_brain->m_Reinforcementscore = 0;
+			m_brain->m_PastReinforcementscore = 0;
+		}
+	}
+	checkCarCollision();
 }
 
 void Track::render(RenderWindow& t_window)
@@ -112,6 +127,22 @@ void Track::setup()
 		c.setOrigin(c.getRadius(), c.getRadius());
 		m_colCirc.push_back(c);
 	}
+}
+
+int Track::calculateReinforcmentScore()
+{
+	m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
+	int score = 0;
+	score = lengthOfLine(m_checkpoints[m_car.getCpNum()]->getPos(), m_car.getPos());
+	int nextcp = m_car.getCpNum() + 1;
+	for (int i = m_car.getCpNum(); i < m_checkpoints.size(); i++)
+	{
+		score += lengthOfLine(m_checkpoints[m_car.getCpNum()]->getPos(), m_checkpoints[nextcp]->getPos());
+		nextcp++;
+		if (nextcp >= m_checkpoints.size())
+			break;
+	}
+	return score;
 }
 
 void Track::setupBoundries()
