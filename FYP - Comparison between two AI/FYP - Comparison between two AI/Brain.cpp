@@ -2,7 +2,7 @@
 
 Brain::Brain():
 	m_Reinforcementscore(0),
-	m_PastReinforcementscore(0)
+	m_PastReinforcementscore(10000)
 {
 	init();
 }
@@ -49,6 +49,7 @@ void Brain::init()
 		Routputs.push_back(make_shared<float>(0.0f)); 
 		q_values.push_back(make_shared<float>(0.0f));
 	}
+	max_q = make_shared<float>(0.0f);
 }
 
 pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
@@ -74,7 +75,7 @@ void Brain::adjustWeights(vector<shared_ptr<float>> t_outputs)
 		{
 			for (int o = 0; o < numOutputs; o++)
 			{
-				if (*t_outputs[o] == 1.0f)
+				//if (*t_outputs[o] == 1.0f)
 				{
 					// update weight
 					RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (m_learningRate * (*q_values[o] - m_soft[o]) * *t_outputs[o]));

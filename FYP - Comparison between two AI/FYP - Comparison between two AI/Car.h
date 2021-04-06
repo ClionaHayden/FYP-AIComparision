@@ -48,10 +48,13 @@ private:
 	Vector2f m_velocity;
 	Vector2f m_forward;
 
-	std::vector<Vector2f> m_collisionLines;
+	std::vector<Vector2f> m_raycasts;
 	const int MAX_COLLISIONS = 5;
-	const float COLLISION_RADIUS = 200;
+	const float RAY_RADIUS = 200;
 	float collLineLengths[5];
+
+	std::vector<Vector2f> m_collisionLines;
+	const float COL_RADIUS = 25;
 
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;

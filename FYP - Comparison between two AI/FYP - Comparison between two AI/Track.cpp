@@ -45,17 +45,23 @@ void Track::update(Time t_deltaTime)
 	}
 	else if (s_gameState == GameState::Reinforcement)
 	{
+		if (m_car.getCpNum() == 1)
+		{
+			int x;
+			x = 1;
+		}
 		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs);
 		vector<shared_ptr<float>> outputs = eval.first;
 		m_car.processOutputs(outputs);
 		m_car.update(t_deltaTime);
+		m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
 		m_brain->m_Reinforcementscore = calculateReinforcmentScore();
-		if (m_brain->m_PastReinforcementscore < m_brain->m_Reinforcementscore)
+		if(m_brain->m_PastReinforcementscore < m_brain->m_Reinforcementscore)
 		{
 			m_brain->adjustWeights(outputs);
 			m_car.reset();
-			m_brain->m_Reinforcementscore = 0;
-			m_brain->m_PastReinforcementscore = 0;
+			m_brain->m_Reinforcementscore = 10000;
+			m_brain->m_PastReinforcementscore = 10000;
 		}
 	}
 	checkCarCollision();
@@ -137,7 +143,7 @@ int Track::calculateReinforcmentScore()
 	int nextcp = m_car.getCpNum() + 1;
 	for (int i = m_car.getCpNum(); i < m_checkpoints.size(); i++)
 	{
-		score += lengthOfLine(m_checkpoints[m_car.getCpNum()]->getPos(), m_checkpoints[nextcp]->getPos());
+		score += lengthOfLine(m_checkpoints[i]->getPos(), m_checkpoints[nextcp]->getPos());
 		nextcp++;
 		if (nextcp >= m_checkpoints.size())
 			break;
@@ -182,25 +188,25 @@ void Track::checkCarCollision()
 			bool top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, true);
 			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, true);
 			inputNum += 2;
-			if (m_car.getSprite().getGlobalBounds().intersects(b.getBounds()))//left
+			if (left/*m_car.getSprite().getGlobalBounds().intersects(b.getBounds())*/)//left
 			{
 				m_car.collidesBoundary(m_brain);
-				//m_car.push(Vector2f(-1, 0));
+				m_car.push(Vector2f(-1, 0));
 			}
 			if (right)
 			{
-				//m_car.collidesBoundary(make_shared<Brain>(m_brain));
-				//m_car.push(Vector2f(1, 0));
+				m_car.collidesBoundary(m_brain);
+				m_car.push(Vector2f(1, 0));
 			}
 			if (top)
 			{
-				//m_car.collidesBoundary(make_shared<Brain>(m_brain));
-				//m_car.push(Vector2f(0, -1));
+				m_car.collidesBoundary(m_brain);
+				m_car.push(Vector2f(0, -1));
 			}
 			if (bottom)
 			{
-				//m_car.collidesBoundary(make_shared<Brain>(m_brain));
-				//m_car.push(Vector2f(0, 1));
+				m_car.collidesBoundary(m_brain);
+				m_car.push(Vector2f(0, 1));
 			}
 		}
 	}

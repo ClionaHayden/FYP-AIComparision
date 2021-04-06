@@ -51,9 +51,18 @@ void Car::render(RenderWindow& t_window, bool t_debug)
 		{
 			sf::VertexArray line(sf::LinesStrip, 2);
 			line[0].position = m_pos;
-			line[0].color = sf::Color::Black;
+			line[0].color = sf::Color::White;
+			line[1].position = m_raycasts[i];
+			line[1].color = sf::Color::White;
+			t_window.draw(line);
+		}
+		for (int i = 0; i < MAX_COLLISIONS; i++)
+		{
+			sf::VertexArray line(sf::LinesStrip, 2);
+			line[0].position = m_pos;
+			line[0].color = sf::Color::Blue;
 			line[1].position = m_collisionLines[i];
-			line[1].color = sf::Color::Black;
+			line[1].color = sf::Color::Blue;
 			t_window.draw(line);
 		}
 	}
@@ -115,7 +124,15 @@ void Car::setup()
 	{
 		float angle =  (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
 		Vector2f vec = Vector2f(cos(angle), sin(angle));
-		vec *= COLLISION_RADIUS;
+		vec *= RAY_RADIUS;
+		vec = m_pos + vec;
+		m_raycasts.push_back(vec);
+	}
+	for (int i = 0; i < MAX_COLLISIONS; i++)
+	{
+		float angle = (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
+		Vector2f vec = Vector2f(cos(angle), sin(angle));
+		vec *= COL_RADIUS;
 		vec = m_pos + vec;
 		m_collisionLines.push_back(vec);
 	}
@@ -136,7 +153,15 @@ void Car::updateColLines()
 	{
 		float angle = (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
 		Vector2f vec = Vector2f(cos(angle), sin(angle));
-		vec *= COLLISION_RADIUS;
+		vec *= RAY_RADIUS;
+		vec = m_pos + vec;
+		m_raycasts[i] = vec;
+	}
+	for (int i = 0; i < MAX_COLLISIONS; i++)
+	{
+		float angle = (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
+		Vector2f vec = Vector2f(cos(angle), sin(angle));
+		vec *= COL_RADIUS;
 		vec = m_pos + vec;
 		m_collisionLines[i] = vec;
 	}
