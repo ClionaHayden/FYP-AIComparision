@@ -81,6 +81,12 @@ void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 		temp.y1 = *t_inputs.at(1);
 		temp.x2 = *t_inputs.at(2);
 		temp.y2 = *t_inputs.at(3);
+		temp.x3 = *t_inputs.at(4);
+		temp.y3 = *t_inputs.at(5);
+		temp.x4 = *t_inputs.at(6);
+		temp.y4 = *t_inputs.at(7);
+		temp.x5 = *t_inputs.at(8);
+		temp.y5 = *t_inputs.at(9);
 		temp.none = true;
 		if(Keyboard::isKeyPressed(Keyboard::A))
 		{
@@ -124,7 +130,8 @@ void Car::setup()
 	{
 		float angle =  (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
 		Vector2f vec = Vector2f(cos(angle), sin(angle));
-		vec *= RAY_RADIUS;
+		collLineLengths[i] = 0.0f;
+		vec *= collLineLengths[i];
 		vec = m_pos + vec;
 		m_raycasts.push_back(vec);
 	}
@@ -153,7 +160,7 @@ void Car::updateColLines()
 	{
 		float angle = (m_rotation + 180.0 + (45.0 * i)) * PI / 180;
 		Vector2f vec = Vector2f(cos(angle), sin(angle));
-		vec *= RAY_RADIUS;
+		vec *= collLineLengths[i];
 		vec = m_pos + vec;
 		m_raycasts[i] = vec;
 	}
@@ -238,9 +245,11 @@ void Car::saveTrainingDataToFile()
 	myfile.open("DATA/TrainingData.csv");
 	for (int i = 0; i < m_backprop.getTrainingData().size(); i++)
 	{
-		myfile << m_backprop.getTrainingData()[i].x1 << "," <<  m_backprop.getTrainingData()[i].y1 
-			<< "," << m_backprop.getTrainingData()[i].x2 << ","<< m_backprop.getTrainingData()[i].y2
-			<< "," 
+		myfile << m_backprop.getTrainingData()[i].x1 << "," << m_backprop.getTrainingData()[i].y1
+			<< "," << m_backprop.getTrainingData()[i].x2 << "," << m_backprop.getTrainingData()[i].y2
+			<< "," << m_backprop.getTrainingData()[i].x3 << "," << m_backprop.getTrainingData()[i].y3 << ","
+			<< m_backprop.getTrainingData()[i].x4 << "," << m_backprop.getTrainingData()[i].y4 << ","
+			<< m_backprop.getTrainingData()[i].x5 << "," << m_backprop.getTrainingData()[i].y5 << ","
 			<< m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," 
 			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "," 
 			<< m_backprop.getTrainingData()[i].none << "\n";

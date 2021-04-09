@@ -98,8 +98,8 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[5] = { 0.0 };
-	float soft[5] = { 0.0 };
+	float dot[10] = { 0.0 };
+	float soft[10] = { 0.0 };
 	float product = 0.0;
 
 	// apply weights input to hidden layer
@@ -128,11 +128,12 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 		temp.push_back(make_shared<float>(result));
 		result = 0.0f;
 	}
+	updateQValues();
 
 	if (temp[4] < temp[0] && temp[4] < temp[1] &&
 		temp[4] < temp[2] && temp[4] < temp[3])
 	{
-		if (temp[0] > temp[1]) // left or right
+		if (q_values[0] > q_values[1]) // left or right
 		{
 			temp[0] = make_shared<float>(1.0f);
 			temp[1] = make_shared<float>(0.0f);
@@ -142,7 +143,7 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 			temp[1] = make_shared<float>(1.0f);
 			temp[0] = make_shared<float>(0.0f);
 		}
-		if (temp[2] > temp[3]) // accel or decel
+		if (q_values[2] > q_values[3]) // accel or decel
 		{
 			temp[2] = make_shared<float>(1.0f);
 			temp[3] = make_shared<float>(0.0f);
@@ -153,7 +154,6 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 			temp[3] = make_shared<float>(0.0f);
 		}
 	}
-	updateQValues();
 
 	pair<vector<shared_ptr<float>>, bool> p = make_pair(temp, false);
 
@@ -164,7 +164,7 @@ void Brain::updateQValues()
 {
 	for (int i = 0; i < q_values.size(); i++)
 	{
-		q_values[i] = make_shared<float>((*q_values[i] * (1.0f - m_learningRate)) + (m_learningRate * (m_Reinforcementscore + (m_discountFactor * *max_q))));
+		q_values[i] = make_shared<float>((*q_values[i] * (1.0f - m_learningRate)) + m_learningRate * (m_Reinforcementscore + (m_discountFactor * *max_q)));
 	}
 
 	max_q = make_shared<float>(0.0f);
@@ -196,7 +196,7 @@ void Brain::loadWeights()
 	while (!weightsFile.eof())
 	{
 		//layer 1
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			row.clear();
 			getline(weightsFile, line);
@@ -213,13 +213,13 @@ void Brain::loadWeights()
 				index = index + 1;
 			}
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			getline(weightsFile, line);
 			//ignore biases
 		}
 		// layer 2
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			row.clear();
 			getline(weightsFile, line);
@@ -236,7 +236,7 @@ void Brain::loadWeights()
 				index = index + 1;
 			}
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			getline(weightsFile, line);
 			//ignore bias
@@ -251,8 +251,8 @@ vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[5] = { 0.0 };
-	float soft[5] = { 0.0 };
+	float dot[10] = { 0.0 };
+	float soft[10] = { 0.0 };
 	float product = 0.0;
 
 	// apply weights input to hidden layer

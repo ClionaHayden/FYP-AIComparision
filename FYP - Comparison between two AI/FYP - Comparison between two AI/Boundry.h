@@ -4,6 +4,7 @@ using namespace sf;
 class Boundry
 {
 public:
+	Boundry() = default;
 	Boundry(Vector2f t_pos, Vector2f t_size, float t_rot);
 	~Boundry();
 	void toggleDraw();

@@ -8,11 +8,11 @@ import os
 import csv
 
 dataset = loadtxt('DATA/TrainingData.csv', delimiter=',')
-X = dataset[:,0:4]
-y = dataset[:,4:9]
+X = dataset[:,0:10]
+y = dataset[:,10:15]
 
 model = Sequential()
-model.add(Dense(5, input_dim=4, activation='relu'))
+model.add(Dense(10, input_dim=10, activation='relu'))
 model.add(Dense(5, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])

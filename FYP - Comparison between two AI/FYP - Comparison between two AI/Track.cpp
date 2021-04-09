@@ -17,15 +17,10 @@ Track::~Track()
 
 void Track::update(Time t_deltaTime)
 {
-
+	raycast();
 	vector<shared_ptr<float>> data;
-	data.push_back(make_shared<float>(m_car.getPos().x));
-	data.push_back(make_shared<float>(m_car.getPos().y));
-	data.push_back(make_shared<float>(m_checkpoints.at(m_car.getCpNum())->getPos().x));
-	data.push_back(make_shared<float>(m_checkpoints.at(m_car.getCpNum())->getPos().y));
-	m_inputs = data;
 	m_car.handleInput(m_inputs);
-
+	m_car.update(t_deltaTime);
 
 	m_inputTimer += t_deltaTime;
 	//m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
@@ -40,7 +35,7 @@ void Track::update(Time t_deltaTime)
 		}
 		else
 		{
-			m_car.reset();
+			//m_car.reset();
 		}
 	}
 	else if (s_gameState == GameState::Reinforcement)
@@ -183,10 +178,10 @@ void Track::checkCarCollision()
 		{
 			// add inputs to neural network
 			Vector2f c = m_car.getColLines().at(i);
-			bool left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, true);
-			bool right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x + b.getBounds().width, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, true);
-			bool top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, true);
-			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, true);
+			bool left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+			bool right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x + b.getBounds().width, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+			bool top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, false);
+			bool bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
 			inputNum += 2;
 			if (left/*m_car.getSprite().getGlobalBounds().intersects(b.getBounds())*/)//left
 			{
@@ -235,6 +230,46 @@ void Track::checkCarCollision()
 	}
 }
 
+void Track::raycast()
+{
+	int inputNum = 0;
+	for (int i = 0; i < m_car.getRays().size(); i++)
+	{
+		m_car.collLineLengths[i] = 5.0f;
+		bool left = false;
+		bool right = false;
+		bool top = false;
+		bool bottom = false;
+		Boundry bound;
+		while (!left && !right && !top && !bottom)
+		{
+			m_car.collLineLengths[i] += 5.0f;
+			m_car.updateColLines();
+			for (Boundry b : m_boundries)
+			{
+				Vector2f c = m_car.getRays().at(i);
+				left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+				right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x + b.getBounds().width, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+				top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, false);
+				bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+				//inputNum += 2;
+				if (left || right || top || bottom)
+				{
+					//inputNum += 2;
+					bound = b;
+					break;
+				}
+			}
+		}
+		Vector2f c = m_car.getRays().at(i);
+		lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, bound.getPos().x, bound.getPos().y, bound.getPos().x, bound.getPos().y + bound.getBounds().height, inputNum, inputNum + 1, i, true);
+		lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, bound.getPos().x + bound.getBounds().width, bound.getPos().y, bound.getPos().x + bound.getBounds().width, bound.getPos().y + bound.getBounds().height, inputNum, inputNum + 1, i, true);
+		lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, bound.getPos().x, bound.getPos().y, bound.getPos().x + bound.getBounds().width, bound.getPos().y, inputNum, inputNum + 1, i, true);
+		lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, bound.getPos().x, bound.getPos().y + bound.getBounds().height, bound.getPos().x + bound.getBounds().width, bound.getPos().y + bound.getBounds().height, inputNum, inputNum + 1, i, true);
+		inputNum += 2;
+	}
+}
+
 bool Track::lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, int t_inputNum1, int t_inputNum2, int t_circNum, bool t_addInput)
 {
 	float uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
@@ -246,8 +281,8 @@ bool Track::lineCollision(float x1, float y1, float x2, float y2, float x3, floa
 			float intersectionY = y1 + (uA * (y2 - y1));
 			float input = lengthOfLine(Vector2f(x1, y1), Vector2f(intersectionX, intersectionY));
 			m_colCirc.at(t_circNum).setPosition(intersectionX, intersectionY);
-			//m_inputs.at(t_inputNum1) = make_shared<float>(intersectionX);
-			//m_inputs.at(t_inputNum2) = make_shared<float>(intersectionY);
+			m_inputs.at(t_inputNum1) = make_shared<float>(intersectionX);
+			m_inputs.at(t_inputNum2) = make_shared<float>(intersectionY);
 		}
 		return true;
 	}

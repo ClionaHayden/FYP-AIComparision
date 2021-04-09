@@ -19,6 +19,7 @@ public:
 	void handleInput(vector<shared_ptr<float>> t_inputs);
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
+	std::vector<Vector2f> getRays() { return m_raycasts; };
 	void push(Vector2f t_dir) { m_pos += t_dir; };
 	Sprite getSprite() { return m_sprite; }
 	FloatRect getBounds() { return m_sprite.getGlobalBounds(); };
@@ -33,8 +34,10 @@ public:
 	void processOutputs(vector<shared_ptr<float>> t_outputs);
 	void reset();
 	void setColLineLength(vector<float> t_lengths);
+	void updateColLines();
 
 	Time m_CPTimer;
+	float collLineLengths[5];
 
 private:
 	Sprite m_sprite;
@@ -45,21 +48,21 @@ private:
 	float m_restartSpeed;
 	double m_rotation;
 	float m_speed;
+	const float MAX_SPEED = 10.0f;
 	Vector2f m_velocity;
 	Vector2f m_forward;
 
 	std::vector<Vector2f> m_raycasts;
 	const int MAX_COLLISIONS = 5;
 	const float RAY_RADIUS = 200;
-	float collLineLengths[5];
 
 	std::vector<Vector2f> m_collisionLines;
 	const float COL_RADIUS = 25;
 
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;
-	const float MAX_ACCELERATION = 100.0f;
-	const float MIN_ACCELERATION = 60.0f;
+	const float MAX_ACCELERATION = 10.0f;
+	const float MIN_ACCELERATION = 0.0f;
 	const float RATE_OF_ACCELERATION = 5.0f;
 
 	int m_pastRscore;
@@ -75,7 +78,6 @@ private:
 
 	void setup();
 	void move(Time t_deltaTime);
-	void updateColLines();
 	Vector2f normalise(Vector2f t_vec);
 	float distance(Vector2f t_vec1, Vector2f t_vec2);
 	void replayLearning();
