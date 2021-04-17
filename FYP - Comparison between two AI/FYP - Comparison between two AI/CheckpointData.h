@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-struct CheckpointData
+struct CheckpointData1
 {
 	static const int MAX_ENTRIES = 20;
 	sf::Vector2f m_pos[MAX_ENTRIES] =
@@ -72,5 +72,57 @@ struct CheckpointData
 		{175.0f,930.0f}, 
 		{200.0f,815.0f},
 		{200.0f,605.0f}
+	};
+};
+struct CheckpointData2
+{
+	static const int MAX_ENTRIES = 13;
+	sf::Vector2f m_pos[MAX_ENTRIES] =
+	{
+		{100.0f,330.0f},
+		{100.0f,170.0f},
+		{200.0f,100.0f},
+		{400.0f,100.0f},
+		{580.0f,100.0f},//
+		{810.0f,180.0f},//
+		{810.0f,500.0f},//
+		{810.0f,800.0f},//
+		{710.0f,850.0f},//
+		{400.0f,850.0f},//
+		{190.0f,850.0f},//
+		{100.0f,800.0f},//
+		{100.0f,600.0f}
+	};
+	sf::Vector2f m_size[MAX_ENTRIES] =
+	{
+		{200.0f,10.0f},
+		{200.0f,10.0f},
+		{10.0f,150.0f},
+		{10.0f,150.0f},
+		{10.0f,150.0f},//
+		{200.0f,10.0f},//
+		{200.0f,10.0f},//
+		{200.0f,10.0f},//
+		{10.0f,150.0f},//
+		{10.0f,150.0f},//
+		{10.0f,150.0f},//
+		{200.0f,10.0f},//
+		{200.0f,10.0f}
+	};
+	sf::Vector2f m_centres[MAX_ENTRIES] =
+	{
+		{200.0f,335.0f},
+		{200.0f,175.0f},
+		{205.0f,175.0f},
+		{405.0f,175.0f},
+		{585.0f,175.0f},//
+		{910.0f,185.0f},
+		{875.0f,335.0f},
+		{735.0f,450.0f},
+		{470.0f,450.0f},
+		{500.0f,460.0f},
+		{485.0f,580.0f},
+		{745.0f,580.0f},
+		{975.0f,605.0f}
 	};
 };

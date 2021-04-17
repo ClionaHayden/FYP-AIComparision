@@ -15,13 +15,14 @@ class Brain
 {
 public:
 	const int numInputs = 10;
-	const int numHidden = 10;
+	const int numHidden = 40;
 	const int numOutputs = 5;
 
 	vector<vector<shared_ptr<float>>> BPweightsLayer1;	// From inputs to hidden layer
 	vector<vector<shared_ptr<float>>>  BPweightsLayer2;	// From hidden layer to output neuron
 	vector<shared_ptr<float>> BPoutputs;
 	shared_ptr<float> BPbiases;
+	vector<shared_ptr<float>> BPHiddenOutputs;
 
 
 	vector<vector<shared_ptr<float>>> RweightsLayer1;	// From inputs to hidden layer

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-struct boundryData
+struct boundryData1
 {
 	static const int MAX_ENTRIES = 18;
 	sf::Vector2f m_pos[MAX_ENTRIES] =
@@ -63,5 +63,42 @@ struct boundryData
 		0,
 		0,
 		0
+	};
+};
+struct boundryData2
+{
+	static const int MAX_ENTRIES = 8;
+	sf::Vector2f m_pos[MAX_ENTRIES] =
+	{
+		{30.0f,10.0f},
+		{30.0f,10.0f},
+		{900.0f,10.0f},
+		{10.0f,920.0f},
+		{180.0f,150.0f},
+		{730.0f,150.0f},
+		{180.0f,800.0f},
+		{180.0f,150.0f}
+	};
+	sf::Vector2f m_size[MAX_ENTRIES] =
+	{
+		{10.0f,1000.0f},
+		{1000.0f,10.0f},
+		{10.0f,1000.0f},
+		{1000.0f,10.0f},
+		{550.0f,10.0f},
+		{10.0f,650.0f},
+		{560.0f,10.0f},
+		{10.0f,650.0f}
+	};
+	float m_rotation[MAX_ENTRIES] =
+	{
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
 	};
 };

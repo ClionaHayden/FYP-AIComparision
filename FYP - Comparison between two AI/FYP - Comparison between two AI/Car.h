@@ -61,14 +61,14 @@ private:
 
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;
-	const float MAX_ACCELERATION = 10.0f;
+	const float MAX_ACCELERATION = 20.0f;
 	const float MIN_ACCELERATION = 0.0f;
 	const float RATE_OF_ACCELERATION = 5.0f;
 
 	int m_pastRscore;
 	float m_pastDist;
 
-	CheckpointData m_checkpoints;
+	CheckpointData1 m_checkpoints;
 	int m_cpNum;
 
 	bool m_replay;

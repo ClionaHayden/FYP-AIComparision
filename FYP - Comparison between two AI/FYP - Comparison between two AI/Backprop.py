@@ -12,7 +12,7 @@ X = dataset[:,0:10]
 y = dataset[:,10:15]
 
 model = Sequential()
-model.add(Dense(10, input_dim=10, activation='relu'))
+model.add(Dense(40, input_dim=10, activation='relu'))
 model.add(Dense(5, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])

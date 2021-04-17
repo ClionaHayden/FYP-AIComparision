@@ -24,10 +24,12 @@ private:
 	Sprite m_sprite;
 	Texture m_tex;
 	std::vector<Boundry> m_boundries;
-	boundryData m_boundryData;
+	boundryData1 m_boundryData1;
+	boundryData2 m_boundryData2;
 	std::vector<std::shared_ptr<Checkpoint>> m_checkpoints;
 	std::vector<CircleShape> m_colCirc;
-	CheckpointData m_checkpointData;
+	CheckpointData1 m_checkpointData1;
+	CheckpointData2 m_checkpointData2;
 	bool m_drawBoundry;
 
 	Car m_car;

@@ -105,7 +105,7 @@ void Track::handleInput(Event& e)
 
 void Track::setup()
 {
-	if (!m_tex.loadFromFile("ASSETS/track.png"))
+	if (!m_tex.loadFromFile("ASSETS/track2.png"))
 	{
 		std::cout << "ERROR - Unable to laod track sprite" << std::endl;
 	}
@@ -148,12 +148,12 @@ int Track::calculateReinforcmentScore()
 
 void Track::setupBoundries()
 {
-	for (int i = 0; i < boundryData::MAX_ENTRIES; i++)
+	for (int i = 0; i < boundryData2::MAX_ENTRIES; i++)
 	{
-		Boundry temp(m_boundryData.m_pos[i], m_boundryData.m_size[i], m_boundryData.m_rotation[i]);
-		if (m_boundryData.m_rotation[i] != 0.0f)
+		Boundry temp(m_boundryData2.m_pos[i], m_boundryData2.m_size[i], m_boundryData2.m_rotation[i]);
+		if (m_boundryData2.m_rotation[i] != 0.0f)
 		{
-			temp.setOrigin(Vector2f(m_boundryData.m_size[i].x / 2.0f, m_boundryData.m_size[i].y / 2.0f));
+			temp.setOrigin(Vector2f(m_boundryData2.m_size[i].x / 2.0f, m_boundryData2.m_size[i].y / 2.0f));
 		}
 		m_boundries.push_back(temp);
 	}
@@ -161,10 +161,10 @@ void Track::setupBoundries()
 
 void Track::setupCheckpoints()
 {
-	for (int i = 0; i < CheckpointData::MAX_ENTRIES; i++)
+	for (int i = 0; i < CheckpointData2::MAX_ENTRIES; i++)
 	{
-		std::shared_ptr<Checkpoint>temp = std::make_shared<Checkpoint>(m_checkpointData.m_pos[i], m_checkpointData.m_size[i]);
-		temp->setOrigin(Vector2f(m_checkpointData.m_size[i].x / 2.0f, m_checkpointData.m_size[i].y / 2.0f));
+		std::shared_ptr<Checkpoint>temp = std::make_shared<Checkpoint>(m_checkpointData2.m_pos[i], m_checkpointData2.m_size[i]);
+		temp->setOrigin(Vector2f(m_checkpointData2.m_size[i].x / 2.0f, m_checkpointData2.m_size[i].y / 2.0f));
 		m_checkpoints.push_back(temp);
 	}
 }
@@ -243,22 +243,32 @@ void Track::raycast()
 		Boundry bound;
 		while (!left && !right && !top && !bottom)
 		{
-			m_car.collLineLengths[i] += 5.0f;
-			m_car.updateColLines();
-			for (Boundry b : m_boundries)
-			{
-				Vector2f c = m_car.getRays().at(i);
-				left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
-				right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x + b.getBounds().width, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
-				top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, false);
-				bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
-				//inputNum += 2;
-				if (left || right || top || bottom)
+				m_car.collLineLengths[i] += 5.0f;
+				m_car.updateColLines();
+				for (Boundry b : m_boundries)
 				{
+					Vector2f c = m_car.getRays().at(i);
+					left = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+					right = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x + b.getBounds().width, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
+					top = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y, b.getPos().x + b.getBounds().width, b.getPos().y, inputNum, inputNum + 1, i, false);
+					bottom = lineCollision(m_car.getPos().x, m_car.getPos().y, c.x, c.y, b.getPos().x, b.getPos().y + b.getBounds().height, b.getPos().x + b.getBounds().width, b.getPos().y + b.getBounds().height, inputNum, inputNum + 1, i, false);
 					//inputNum += 2;
-					bound = b;
-					break;
-				}
+					if (left || right || top || bottom)
+					{
+						if (m_car.collLineLengths[i] < 200.0f)
+						{
+							//inputNum += 2;
+							bound = b;
+							break;
+						}
+						else
+						{
+							m_car.collLineLengths[i] = 200.0f;
+							bound = b;
+							break;
+						}
+					}
+				
 			}
 		}
 		Vector2f c = m_car.getRays().at(i);
