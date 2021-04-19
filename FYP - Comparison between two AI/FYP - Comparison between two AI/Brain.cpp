@@ -57,11 +57,15 @@ pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> 
 	bool adjust = false;
 	if (s_gameState == GameState::Reinforcement)
 	{
+		if (Keyboard::isKeyPressed(Keyboard::S))
+		{
+			saveRWeights();
+		}
 		return reinforcement(t_inputs);
 	}
 	else if (s_gameState == GameState::LoadWeights)
 	{
-		loadWeights();
+		loadBPWeights();
 		BPoutputs = backprop(t_inputs);
 	}
 	return make_pair(BPoutputs, adjust);
@@ -178,12 +182,31 @@ void Brain::updateQValues()
 
 void Brain::saveRWeights()
 {
+	std::ofstream myfile;
+	myfile.open("DATA/ReinforcementWeights.csv");
+	for (int i = 0; i < RweightsLayer1.size(); i++)
+	{
+		for (int j = 0; j < RweightsLayer1[i].size(); j++)
+		{
+			myfile << *RweightsLayer1[i][j] << ",";
+		}
+		myfile<< "\n";
+	}
+	for (int i = 0; i < RweightsLayer2.size(); i++)
+	{
+		for (int j = 0; j < RweightsLayer2[i].size(); j++)
+		{
+			myfile << *RweightsLayer2[i][j] << ",";
+		}
+		myfile << "\n";
+	}
+	myfile.close();
 }
 
 /// <summary>
 /// load backprop weights
 /// </summary>
-void Brain::loadWeights()
+void Brain::loadBPWeights()
 {
 	vector<string> row;
 	string line, word, temp;
@@ -240,6 +263,58 @@ void Brain::loadWeights()
 		{
 			getline(weightsFile, line);
 			//ignore bias
+		}
+	}
+	weightsFile.close();
+}
+
+void Brain::loadRWeights()
+{
+	vector<string> row;
+	string line, word, temp;
+	int layer = 0;
+	int index = 0;
+	float weight = 0.0f;
+
+	weightsFile.open("DATA/ReinforcementWeights.csv");
+
+	while (!weightsFile.eof())
+	{
+		//layer 1
+		for (int i = 0; i < numInputs; i++)
+		{
+			row.clear();
+			getline(weightsFile, line);
+			//cout << line << std::endl;
+
+			stringstream s(line);
+
+			index = 0;
+			while (getline(s, word, ','))
+			{
+				weight = stof(word);
+				BPweightsLayer1[i][index] = make_shared<float>(weight);
+				//std::cout << "Inputs to Hidden: " << weight << std::endl;
+				index = index + 1;
+			}
+		}
+		// layer 2
+		for (int i = 0; i < numHidden; i++)
+		{
+			row.clear();
+			getline(weightsFile, line);
+			//cout << line << std::endl;
+
+			stringstream s(line);
+
+			index = 0;
+			while (getline(s, word, ','))
+			{
+				weight = stof(word);
+				BPweightsLayer2[i][index] = make_shared<float>(weight);
+				//std::cout << "Inputs to Hidden: " << weight << std::endl;
+				index = index + 1;
+			}
 		}
 	}
 	weightsFile.close();

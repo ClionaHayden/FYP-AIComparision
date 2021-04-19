@@ -55,7 +55,8 @@ private:
 	pair<vector<shared_ptr<float>>, bool> reinforcement(vector<shared_ptr<float>> t_inputs);
 	void updateQValues();
 	void saveRWeights();
-	void loadWeights();
+	void loadBPWeights();
+	void loadRWeights();
 	vector<shared_ptr<float>> backprop(vector<shared_ptr<float>> t_inputs);
 
 	void SoftMax(float data[], int len);
