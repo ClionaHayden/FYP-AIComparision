@@ -18,7 +18,7 @@ Track::~Track()
 
 void Track::update(Time t_deltaTime)
 {
-	if (m_inputTimer > seconds(0.1))
+	if (m_inputTimer > seconds(0.2))
 	{
 		raycast();
 		m_inputTimer = Time::Zero;

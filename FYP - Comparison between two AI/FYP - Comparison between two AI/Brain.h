@@ -14,7 +14,7 @@ using namespace std;
 class Brain
 {
 public:
-	const int numInputs = 10;
+	const int numInputs = 12;
 	const int numHidden = 40;
 	const int numOutputs = 5;
 

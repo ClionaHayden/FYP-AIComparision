@@ -87,6 +87,8 @@ void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 		temp.y4 = *t_inputs.at(7);
 		temp.x5 = *t_inputs.at(8);
 		temp.y5 = *t_inputs.at(9);
+		temp.posx = m_sprite.getPosition().x;
+		temp.posy = m_sprite.getPosition().y;
 		temp.none = true;
 		if(Keyboard::isKeyPressed(Keyboard::A))
 		{
@@ -250,6 +252,7 @@ void Car::saveTrainingDataToFile()
 			<< "," << m_backprop.getTrainingData()[i].x3 << "," << m_backprop.getTrainingData()[i].y3 << ","
 			<< m_backprop.getTrainingData()[i].x4 << "," << m_backprop.getTrainingData()[i].y4 << ","
 			<< m_backprop.getTrainingData()[i].x5 << "," << m_backprop.getTrainingData()[i].y5 << ","
+			<< m_backprop.getTrainingData()[i].posx << "," << m_backprop.getTrainingData()[i].posy << ","
 			<< m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," 
 			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "," 
 			<< m_backprop.getTrainingData()[i].none << "\n";

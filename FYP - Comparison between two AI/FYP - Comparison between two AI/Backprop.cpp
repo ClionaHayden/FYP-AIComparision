@@ -2,7 +2,6 @@
 
 Backprop::Backprop()
 {
-	loadBPData();
 }
 
 Backprop::~Backprop()

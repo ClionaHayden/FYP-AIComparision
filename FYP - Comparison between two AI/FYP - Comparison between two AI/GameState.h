@@ -37,6 +37,8 @@ struct TrainingData
 	float y4 = 0;
 	float x5 = 0;
 	float y5 = 0;
+	float posy = 0;
+	float posx = 0;
 	bool left = false;
 	bool right = false;
 	bool up = false;
