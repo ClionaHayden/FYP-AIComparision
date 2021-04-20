@@ -55,7 +55,8 @@ void TainingInstructionsScreen::setupSprite()
 
 void TainingInstructionsScreen::setupText()
 {
-	if (!m_font.loadFromFile("ASSETS/FONT/font.ttf")) { cout << "Error loading font" << endl; }
+	if (!m_font.loadFromFile("ASSETS/FONT/font.ttf"))
+		cout << "Error loading font" << endl;
 
 	m_titleText.setFont(m_font);
 	m_titleText.setString("Collecting Training \n             Data");
@@ -64,7 +65,7 @@ void TainingInstructionsScreen::setupText()
 	m_titleText.setCharacterSize(150);
 
 	m_instructions.setFont(m_font);
-	m_instructions.setString("Try to do a lap of the track as best as you can.");
+	m_instructions.setString("Try to do 3 laps of the track as best as you can.");
 	m_instructions.setFillColor(Color::White);
 	m_instructions.setPosition(Vector2f(130.0f, 180.0f));
 	m_instructions.setCharacterSize(90);

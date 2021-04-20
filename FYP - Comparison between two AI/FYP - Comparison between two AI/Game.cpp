@@ -64,6 +64,7 @@ void Game::processKeys(sf::Event& t_event)
 	case GameState::Backprop:
 		break;
 	case GameState::Success:
+		m_successScreen.handleInput(t_event,m_window);
 		break;
 	case GameState::Fail:
 		break;
@@ -109,6 +110,7 @@ void Game::update(sf::Time t_deltaTime)
 	case GameState::Backprop:
 		break;
 	case GameState::Success:
+		m_successScreen.update(t_deltaTime);
 		break;
 	case GameState::Fail:
 		break;
@@ -149,6 +151,7 @@ void Game::render()
 	case GameState::Backprop:
 		break;
 	case GameState::Success:
+		m_successScreen.render(m_window);
 		break;
 	case GameState::Fail:
 		break;

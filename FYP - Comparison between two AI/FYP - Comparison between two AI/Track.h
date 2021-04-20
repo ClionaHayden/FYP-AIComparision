@@ -47,7 +47,11 @@ private:
 	int m_lapNum;
 	Time m_raycastTime;
 
+	Text m_instructionsText;
+	Font m_font;
+
 	void setup();
+	void setupText();
 	int calculateReinforcmentScore();
 	void setupBoundries();
 	void setupCheckpoints();

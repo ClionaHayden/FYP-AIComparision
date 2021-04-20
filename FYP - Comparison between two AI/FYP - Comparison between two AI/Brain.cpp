@@ -59,7 +59,9 @@ pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> 
 	{
 		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
+			cout << "Saving Data...." << endl;
 			saveRWeights();
+			cout << "Saved" << endl;
 		}
 		return reinforcement(t_inputs);
 	}
@@ -95,8 +97,11 @@ void Brain::adjustWeights(vector<shared_ptr<float>> t_outputs)
 		{
 			for (int o = 0; o < numOutputs; o++)
 			{
-				float error = *q_values[o] * (1 - *q_values[o]) * m_learningRate;
-				RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (error * *q_values[o]));
+				if (*t_outputs[o] == 1.0f)
+				{
+					float error = *q_values[o] * (1 - *q_values[o]) * m_learningRate;
+					RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (error * *q_values[o]));
+				}
 			}
 		}
 	}

@@ -51,11 +51,6 @@ void Track::update(Time t_deltaTime)
 	else if (s_gameState == GameState::Reinforcement)
 	{
 		m_raycastTime = seconds(0.2);
-		if (m_car.getCpNum() == 1)
-		{
-			int x;
-			x = 1;
-		}
 		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs,false);
 		vector<shared_ptr<float>> outputs = eval.first;
 		m_car.processOutputs(outputs);
@@ -80,6 +75,10 @@ void Track::update(Time t_deltaTime)
 void Track::render(RenderWindow& t_window)
 {
 	t_window.draw(m_sprite);
+	if (s_gameState == GameState::Reinforcement)
+	{
+		t_window.draw(m_instructionsText);
+	}
 	if (m_drawBoundry)
 	{
 		for (Boundry b : m_boundries)
@@ -124,10 +123,19 @@ void Track::handleInput(Event& e)
 		}
 		m_inputTimer = sf::Time::Zero;
 	}
+	if (s_gameState == GameState::Reinforcement)
+	{
+		if (Keyboard::isKeyPressed(Keyboard::BackSpace))
+		{
+			s_gameState = GameState::MainMenu;
+			m_car.reset();
+		}
+	}
 }
 
 void Track::setup()
 {
+	setupText();
 	if (!m_tex.loadFromFile("ASSETS/track2.png"))
 	{
 		std::cout << "ERROR - Unable to laod track sprite" << std::endl;
@@ -155,6 +163,18 @@ void Track::setup()
 		m_colCirc.push_back(c);
 		m_colCircReinforcment.push_back(c);
 	}
+}
+
+void Track::setupText()
+{
+	if (!m_font.loadFromFile("ASSETS/FONT/font.ttf"))
+		cout << "Error loading font" << endl;
+
+	m_instructionsText.setFont(m_font);
+	m_instructionsText.setString("Instructions \nS - save weights \nBackspace - Return to Main Menu");
+	m_instructionsText.setFillColor(Color::White);
+	m_instructionsText.setPosition(Vector2f(300.0f, 500.0f));
+	m_instructionsText.setCharacterSize(50);
 }
 
 int Track::calculateReinforcmentScore()
@@ -252,7 +272,9 @@ void Track::checkCarCollision()
 		{
 			if (s_gameState == GameState::TrainingDataCollection)
 			{
+				cout << "Saving Data...." << endl;
 				m_car.saveTrainingDataToFile();
+				cout << "Saved" << endl;
 				s_gameState = GameState::Success;
 
 			}

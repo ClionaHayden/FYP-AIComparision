@@ -28,18 +28,6 @@ void Car::update(Time t_deltaTime)
 	m_sprite.setRotation(m_rotation);
 	move(t_deltaTime);
 	updateColLines();
-	if (s_gameState == GameState::Reinforcement)
-	{
-		//m_reinforcement.update(t_deltaTime);
-		if (!m_replay)
-		{
-			//reinforcement();
-		}
-		else
-		{
-			replayLearning();
-		}
-	}
 }
 
 void Car::render(RenderWindow& t_window, bool t_debug)
