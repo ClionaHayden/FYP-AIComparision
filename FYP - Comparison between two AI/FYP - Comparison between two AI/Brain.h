@@ -47,7 +47,7 @@ public:
 	~Brain();
 	void init();
 
-	pair<vector<shared_ptr<float>>,bool> Evaluate(vector<shared_ptr<float>> t_inputs);
+	pair<vector<shared_ptr<float>>,bool> Evaluate(vector<shared_ptr<float>> t_inputs,bool t_reinforcement);
 	void adjustWeights(vector<shared_ptr<float>> t_outputs);
 	float Sigmoid(float z);
 

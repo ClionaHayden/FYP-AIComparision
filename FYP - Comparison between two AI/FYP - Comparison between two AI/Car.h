@@ -35,6 +35,7 @@ public:
 	void reset();
 	void setColLineLength(vector<float> t_lengths);
 	void updateColLines();
+	void changeColor(Color t_new) { m_sprite.setColor(t_new); }
 
 	Time m_CPTimer;
 	float collLineLengths[5];

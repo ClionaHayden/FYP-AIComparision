@@ -33,9 +33,13 @@ private:
 	bool m_drawBoundry;
 
 	Car m_car;
-
 	shared_ptr<Brain> m_brain;
 	vector<shared_ptr<float>> m_inputs;
+
+	Car m_ReinforcementCar;
+	shared_ptr<Brain> m_ReinforcementBrain;
+	vector<shared_ptr<float>> m_ReinforcementInputs;
+	std::vector<CircleShape> m_colCircReinforcment;
 
 	sf::Time m_inputTimer;
 
@@ -48,7 +52,7 @@ private:
 	void setupCheckpoints();
 	void checkCarCollision();
 	void raycast();
-	bool lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, int t_inputNum1, int t_inputNum2, int t_circNum, bool t_addInput);
+	bool lineCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, int t_inputNum1, int t_inputNum2, int t_circNum, bool t_addInput, bool t_backprop);
 	float lengthOfLine(Vector2f t_l1, Vector2f t_l2);
 	bool rectCollision(FloatRect t_rect1, FloatRect t_rect2, Vector2f t_pos1, Vector2f t_pos2);
 };

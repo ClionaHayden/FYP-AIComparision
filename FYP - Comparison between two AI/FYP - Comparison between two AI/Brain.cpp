@@ -52,7 +52,7 @@ void Brain::init()
 	max_q = make_shared<float>(0.0f);
 }
 
-pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> t_inputs)
+pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> t_inputs, bool t_reinforcement)
 {
 	bool adjust = false;
 	if (s_gameState == GameState::Reinforcement)
@@ -65,8 +65,16 @@ pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> 
 	}
 	else if (s_gameState == GameState::LoadWeights)
 	{
-		loadBPWeights();
-		BPoutputs = backprop(t_inputs);
+		if (t_reinforcement)
+		{
+			loadRWeights();
+			return reinforcement(t_inputs);
+		}
+		else
+		{
+			loadBPWeights();
+			BPoutputs = backprop(t_inputs);
+		}
 	}
 	return make_pair(BPoutputs, adjust);
 }
