@@ -83,15 +83,20 @@ void Brain::adjustWeights(vector<shared_ptr<float>> t_outputs)
 {
 	if (m_PastReinforcementscore < m_Reinforcementscore)
 	{
+		for (int i = 0; i < numInputs; i++)
+		{
+			for (int j = 0; j < numHidden; j++)
+			{
+				float error = m_soft[j] * (1 - m_soft[j]) * m_learningRate;
+				RweightsLayer1[i][j] = make_shared<float>(*RweightsLayer1[i][j] + (error * m_soft[j]));
+			}
+		}
 		for (int i = 0; i < numHidden; i++)
 		{
 			for (int o = 0; o < numOutputs; o++)
 			{
-				//if (*t_outputs[o] == 1.0f)
-				{
-					// update weight
-					RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (m_learningRate * (*q_values[o] - m_soft[o]) * *t_outputs[o]));
-				}
+				float error = *q_values[o] * (1 - *q_values[o]) * m_learningRate;
+				RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (error * *q_values[o]));
 			}
 		}
 	}
@@ -140,8 +145,7 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 		temp.push_back(make_shared<float>(result));
 		result = 0.0f;
 	}
-	updateQValues();
-
+	q_values = temp;
 	if (temp[4] < temp[0] && temp[4] < temp[1] &&
 		temp[4] < temp[2] && temp[4] < temp[3])
 	{
@@ -170,22 +174,6 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 	pair<vector<shared_ptr<float>>, bool> p = make_pair(temp, false);
 
 	return p;
-}
-
-void Brain::updateQValues()
-{
-	for (int i = 0; i < q_values.size(); i++)
-	{
-		q_values[i] = make_shared<float>((*q_values[i] * (1.0f - m_learningRate)) + m_learningRate * (m_Reinforcementscore + (m_discountFactor * *max_q)));
-	}
-
-	max_q = make_shared<float>(0.0f);
-
-	for (int i = 0; i < q_values.size(); i++)
-	{
-		if (q_values[i] > max_q)
-			max_q = q_values[i];
-	}
 }
 
 void Brain::saveRWeights()

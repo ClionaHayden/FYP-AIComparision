@@ -5,9 +5,10 @@ Track::Track() :
 	m_drawBoundry{ false },
 	m_car{ Vector2f(100.0f, 450.0f), 50.0f },
 	m_ReinforcementCar{ Vector2f(150.0f, 450.0f), 50.0f },
-	m_inputTimer{ sf::Time::Zero },
+	m_inputTimer{ seconds(1) },
 	m_lap{ false },
-	m_lapNum{ 0 }
+	m_lapNum{ 0 },
+	m_raycastTime(seconds(0.2))
 {
 	setup();
 }
@@ -18,7 +19,7 @@ Track::~Track()
 
 void Track::update(Time t_deltaTime)
 {
-	if (m_inputTimer > seconds(0.2))
+	if (m_inputTimer > m_raycastTime)
 	{
 		raycast();
 		m_inputTimer = Time::Zero;
@@ -29,6 +30,7 @@ void Track::update(Time t_deltaTime)
 	m_inputTimer += t_deltaTime;
 	if (s_gameState == GameState::LoadWeights)
 	{
+		m_raycastTime = seconds(0.7);
 		m_ReinforcementCar.handleInput(m_inputs);
 		m_ReinforcementCar.update(t_deltaTime);
 		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs,false);
@@ -48,6 +50,7 @@ void Track::update(Time t_deltaTime)
 	}
 	else if (s_gameState == GameState::Reinforcement)
 	{
+		m_raycastTime = seconds(0.2);
 		if (m_car.getCpNum() == 1)
 		{
 			int x;
@@ -63,6 +66,10 @@ void Track::update(Time t_deltaTime)
 		{
 			m_brain->adjustWeights(outputs);
 			m_car.reset();
+			for (shared_ptr<Checkpoint> c : m_checkpoints)
+			{
+				c->setPassed(false);
+			}
 			m_brain->m_Reinforcementscore = 10000;
 			m_brain->m_PastReinforcementscore = 10000;
 		}
@@ -333,7 +340,7 @@ void Track::raycast()
 							break;
 						}
 					}
-				
+
 			}
 		}
 		Vector2f c = m_car.getRays().at(i);

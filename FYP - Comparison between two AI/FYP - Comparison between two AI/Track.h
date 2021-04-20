@@ -45,6 +45,7 @@ private:
 
 	bool m_lap;
 	int m_lapNum;
+	Time m_raycastTime;
 
 	void setup();
 	int calculateReinforcmentScore();

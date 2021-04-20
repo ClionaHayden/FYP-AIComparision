@@ -235,7 +235,7 @@ void Car::accelerate()
 
 void Car::decelerate()
 {
-	if (m_speed > 0.0f)
+	if (m_speed > MIN_ACCELERATION)
 	{
 		m_speed -= RATE_OF_ACCELERATION;
 	}

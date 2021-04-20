@@ -63,7 +63,7 @@ private:
 	const float RATE_OF_ROTATION = 5.0f;
 	const float MASS = 1.0f;
 	const float MAX_ACCELERATION = 20.0f;
-	const float MIN_ACCELERATION = 0.0f;
+	const float MIN_ACCELERATION = 10.0f;
 	const float RATE_OF_ACCELERATION = 5.0f;
 
 	int m_pastRscore;

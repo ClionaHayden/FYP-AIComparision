@@ -33,8 +33,9 @@ public:
 	vector<shared_ptr<float>> q_values;
 	shared_ptr<float> max_q;
 	vector<float> m_soft;
-	float m_learningRate = 0.5;
-	float m_discountRate = 0.05;
+	float m_learningRate = 0.5f;
+	float m_phi = 0.0f;
+	float m_discountRate = 0.05f;
 	float m_discountFactor = 1.0f / (1.0f + m_discountRate);
 
 	bool useBiases = false;
@@ -53,7 +54,6 @@ public:
 
 private:
 	pair<vector<shared_ptr<float>>, bool> reinforcement(vector<shared_ptr<float>> t_inputs);
-	void updateQValues();
 	void saveRWeights();
 	void loadBPWeights();
 	void loadRWeights();
