@@ -22,11 +22,11 @@ Car::~Car()
 {
 }
 
-void Car::update(Time t_deltaTime)
+void Car::update(Time t_deltaTime, Vector2f t_cpPos)
 {
 	m_CPTimer += t_deltaTime;
 	m_sprite.setRotation(m_rotation);
-	move(t_deltaTime);
+	move(t_deltaTime, t_cpPos);
 	updateColLines();
 }
 
@@ -56,7 +56,7 @@ void Car::render(RenderWindow& t_window, bool t_debug)
 	}
 }
 
-void Car::handleInput(vector<shared_ptr<float>> t_inputs)
+void Car::handleInput(vector<float> t_inputs)
 {
 	if (Keyboard::isKeyPressed(Keyboard::R))
 	{
@@ -65,18 +65,19 @@ void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 	if (s_gameState == GameState::TrainingDataCollection)
 	{
 		TrainingData temp;
-		temp.x1 = *t_inputs.at(0);
-		temp.y1 = *t_inputs.at(1);
-		temp.x2 = *t_inputs.at(2);
-		temp.y2 = *t_inputs.at(3);
-		temp.x3 = *t_inputs.at(4);
-		temp.y3 = *t_inputs.at(5);
-		temp.x4 = *t_inputs.at(6);
-		temp.y4 = *t_inputs.at(7);
-		temp.x5 = *t_inputs.at(8);
-		temp.y5 = *t_inputs.at(9);
+		temp.x1 = t_inputs.at(0);
+		temp.y1 = t_inputs.at(1);
+		temp.x2 = t_inputs.at(2);
+		temp.y2 = t_inputs.at(3);
+		temp.x3 = t_inputs.at(4);
+		temp.y3 = t_inputs.at(5);
+		temp.x4 = t_inputs.at(6);
+		temp.y4 = t_inputs.at(7);
+		temp.x5 = t_inputs.at(8);
+		temp.y5 = t_inputs.at(9);
 		temp.posx = m_sprite.getPosition().x;
 		temp.posy = m_sprite.getPosition().y;
+		temp.rotation = m_sprite.getRotation();
 		temp.none = true;
 		if(Keyboard::isKeyPressed(Keyboard::A))
 		{
@@ -92,15 +93,15 @@ void Car::handleInput(vector<shared_ptr<float>> t_inputs)
 		}
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
+			accelerate();
 			temp.up = true;
 			temp.none = false;
-			accelerate();
 		}
 		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
+			decelerate();
 			temp.down = true;
 			temp.none = false;
-			decelerate();
 		}
 		m_backprop.addTrainingData(temp);
 	}
@@ -135,13 +136,20 @@ void Car::setup()
 	}
 }
 
-void Car::move(Time t_deltaTime)
+void Car::move(Time t_deltaTime , Vector2f t_cpPos)
 {
-	float angle = (m_rotation - 90.0) * PI / 180;
-	m_velocity = Vector2f(cos(angle), sin(angle));
-	m_velocity = normalise(m_velocity);
-	m_pos += m_velocity * m_speed * t_deltaTime.asSeconds();
-	m_sprite.setPosition(m_pos);
+	if (!m_test)
+	{
+		float angle = (m_rotation - 90.0) * PI / 180;
+		m_velocity = Vector2f(cos(angle), sin(angle));
+		m_velocity = normalise(m_velocity);
+		m_pos += m_velocity * m_speed * t_deltaTime.asSeconds();
+		m_sprite.setPosition(m_pos);
+	}
+	else
+	{
+		moveTowardsCheckpoint(t_deltaTime,t_cpPos);
+	}
 }
 
 void Car::updateColLines()
@@ -205,7 +213,8 @@ void Car::replayLearning()
 
 void Car::turnLeft()
 {
-	m_rotation -= RATE_OF_ROTATION;
+	if(m_rotation > 5.0f)
+		m_rotation -= RATE_OF_ROTATION;
 }
 
 void Car::turnRight()
@@ -215,7 +224,7 @@ void Car::turnRight()
 
 void Car::accelerate()
 {
-	if (m_speed < MAX_ACCELERATION)
+	if (m_speed < MAX_SPEED)
 	{
 		m_speed += RATE_OF_ACCELERATION;
 	}
@@ -227,6 +236,18 @@ void Car::decelerate()
 	{
 		m_speed -= RATE_OF_ACCELERATION;
 	}
+}
+
+void Car::moveTowardsCheckpoint(Time t_deltaTime, Vector2f t_CPpos)
+{
+	Vector2f dir = normalise(t_CPpos - m_pos);
+	m_pos += dir * m_speed * t_deltaTime.asSeconds();
+	float angle = atan2(dir.y, dir.x);
+	angle = angle * 180 / PI;
+	angle += rand() % 6 - 3;
+	m_rotation = angle + 90;
+	m_sprite.setRotation(angle + 90);
+	m_sprite.setPosition(m_pos);
 }
 
 void Car::saveTrainingDataToFile()
@@ -241,6 +262,7 @@ void Car::saveTrainingDataToFile()
 			<< m_backprop.getTrainingData()[i].x4 << "," << m_backprop.getTrainingData()[i].y4 << ","
 			<< m_backprop.getTrainingData()[i].x5 << "," << m_backprop.getTrainingData()[i].y5 << ","
 			<< m_backprop.getTrainingData()[i].posx << "," << m_backprop.getTrainingData()[i].posy << ","
+			<< m_backprop.getTrainingData()[i].rotation << ","
 			<< m_backprop.getTrainingData()[i].left << "," << m_backprop.getTrainingData()[i].right<< "," 
 			<< m_backprop.getTrainingData()[i].up<< "," << m_backprop.getTrainingData()[i].down << "," 
 			<< m_backprop.getTrainingData()[i].none << "\n";
@@ -248,21 +270,21 @@ void Car::saveTrainingDataToFile()
 	myfile.close();
 }
 
-void Car::processOutputs(vector<shared_ptr<float>> t_outputs)
+void Car::processOutputs(vector<float> t_outputs)
 {
-	if (*t_outputs.at(0) == 1.0f)
+	if (t_outputs.at(0) == 1.0f)
 	{
 		turnLeft();
 	}
-	if (*t_outputs.at(1) == 1.0f)
+	if (t_outputs.at(1) == 1.0f)
 	{
 		turnRight();
 	}
-	if (*t_outputs.at(2) == 1.0f)
+	if (t_outputs.at(2) == 1.0f)
 	{
 		accelerate();
 	}
-	if (*t_outputs.at(3) == 1.0f)
+	if (t_outputs.at(3) == 1.0f)
 	{
 		decelerate();
 	}

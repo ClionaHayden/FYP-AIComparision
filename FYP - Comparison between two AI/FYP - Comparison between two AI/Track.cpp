@@ -8,7 +8,8 @@ Track::Track() :
 	m_inputTimer{ seconds(1) },
 	m_lap{ false },
 	m_lapNum{ 0 },
-	m_raycastTime(seconds(0.2))
+	m_raycastTime(seconds(0.1)),
+	m_colisionTimer(Time::Zero)
 {
 	setup();
 }
@@ -19,54 +20,54 @@ Track::~Track()
 
 void Track::update(Time t_deltaTime)
 {
+	m_colisionTimer += t_deltaTime;
 	if (m_inputTimer > m_raycastTime)
 	{
 		raycast();
 		m_inputTimer = Time::Zero;
 	}
 	m_car.handleInput(m_inputs);
-	m_car.update(t_deltaTime);
+	m_car.update(t_deltaTime, m_checkpoints.at(m_car.getCpNum()).getPos());
 
 	m_inputTimer += t_deltaTime;
 	if (s_gameState == GameState::LoadWeights)
 	{
-		m_raycastTime = seconds(0.7);
+		//m_raycastTime = seconds(0.7);
 		m_ReinforcementCar.handleInput(m_inputs);
-		m_ReinforcementCar.update(t_deltaTime);
-		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs,false);
+		m_ReinforcementCar.update(t_deltaTime, m_checkpoints.at(m_car.getCpNum()).getPos());
+		pair<vector<float>, bool> eval = m_brain->Evaluate(m_inputs,false);
 		if (!eval.second)
 		{
-			vector<shared_ptr<float>> outputs = eval.first;
+			vector<float> outputs = eval.first;
 			m_car.processOutputs(outputs);
-			m_car.update(t_deltaTime);
+			m_car.update(t_deltaTime, m_checkpoints.at(m_car.getCpNum()).getPos());
 		}
-		eval = m_brain->Evaluate(m_inputs, true);
+		eval = m_brain->Evaluate(m_ReinforcementInputs, true);
 		if (!eval.second)
 		{
-			vector<shared_ptr<float>> outputs = eval.first;
+			vector<float> outputs = eval.first;
 			m_ReinforcementCar.processOutputs(outputs);
-			m_ReinforcementCar.update(t_deltaTime);
+			m_ReinforcementCar.update(t_deltaTime,m_checkpoints.at(m_car.getCpNum()).getPos());
 		}
 	}
 	else if (s_gameState == GameState::Reinforcement)
 	{
-		m_raycastTime = seconds(0.2);
-		pair<vector<shared_ptr<float>>, bool> eval = m_brain->Evaluate(m_inputs,false);
-		vector<shared_ptr<float>> outputs = eval.first;
+		pair<vector<float>, bool> eval = m_brain->Evaluate(m_inputs,false);
+		vector<float> outputs = eval.first;
 		m_car.processOutputs(outputs);
-		m_car.update(t_deltaTime);
+		m_car.update(t_deltaTime, m_checkpoints.at(m_car.getCpNum()).getPos());
 		m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
 		m_brain->m_Reinforcementscore = calculateReinforcmentScore();
-		if(m_brain->m_PastReinforcementscore < m_brain->m_Reinforcementscore)
+		if(m_brain->m_PastReinforcementscore > m_brain->m_Reinforcementscore)
 		{
 			m_brain->adjustWeights(outputs);
 			m_car.reset();
-			for (shared_ptr<Checkpoint> c : m_checkpoints)
+			for (Checkpoint c : m_checkpoints)
 			{
-				c->setPassed(false);
+				c.setPassed(false);
 			}
-			m_brain->m_Reinforcementscore = 10000;
-			m_brain->m_PastReinforcementscore = 10000;
+			m_brain->m_Reinforcementscore = -100000;
+			m_brain->m_PastReinforcementscore = -10000;
 		}
 	}
 	checkCarCollision();
@@ -85,9 +86,9 @@ void Track::render(RenderWindow& t_window)
 		{
 			b.draw(t_window);
 		}
-		for (std::shared_ptr<Checkpoint> c : m_checkpoints)
+		for (Checkpoint c : m_checkpoints)
 		{
-			c->draw(t_window);
+			c.draw(t_window);
 		}
 		for (CircleShape c : m_colCirc)
 		{
@@ -103,7 +104,7 @@ void Track::render(RenderWindow& t_window)
 	sf::VertexArray line(sf::LinesStrip, 2);
 	line[0].position = m_car.getPos();
 	line[0].color = sf::Color::Black;
-	line[1].position = m_checkpoints.at(m_car.getCpNum())->getPos();
+	line[1].position = m_checkpoints.at(m_car.getCpNum()).getPos();
 	line[1].color = sf::Color::Black;
 	t_window.draw(line);
 	if (s_gameState == GameState::LoadWeights)
@@ -114,6 +115,10 @@ void Track::render(RenderWindow& t_window)
 
 void Track::handleInput(Event& e)
 {
+	if (Keyboard::isKeyPressed(Keyboard::T))
+	{
+		m_car.m_test = true;
+	}
 	if (m_inputTimer.asSeconds() > 0.1)
 	{
 		if (sf::Keyboard::B == e.key.code)
@@ -151,8 +156,8 @@ void Track::setup()
 
 	for (int i = 0; i < m_brain->numInputs; i++)
 	{
-		m_inputs.push_back(make_shared<float>(0));
-		m_ReinforcementInputs.push_back(make_shared<float>(0));
+		m_inputs.push_back(0);
+		m_ReinforcementInputs.push_back(0);
 	}
 	for (int i = 0; i < 5; i++)
 	{
@@ -177,20 +182,20 @@ void Track::setupText()
 	m_instructionsText.setCharacterSize(50);
 }
 
-int Track::calculateReinforcmentScore()
+float Track::calculateReinforcmentScore()
 {
 	m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
-	int score = 0;
-	score = lengthOfLine(m_checkpoints[m_car.getCpNum()]->getPos(), m_car.getPos());
+	float score = 0;
+	score = lengthOfLine(m_checkpoints[m_car.getCpNum()].getPos(), m_car.getPos()) + 100;
 	int nextcp = m_car.getCpNum() + 1;
 	for (int i = m_car.getCpNum(); i < m_checkpoints.size(); i++)
 	{
-		score += lengthOfLine(m_checkpoints[i]->getPos(), m_checkpoints[nextcp]->getPos());
+		score += lengthOfLine(m_checkpoints[i].getPos(), m_checkpoints[nextcp].getPos());
 		nextcp++;
 		if (nextcp >= m_checkpoints.size())
 			break;
 	}
-	return score;
+	return (1000 - score) / 10000;
 }
 
 void Track::setupBoundries()
@@ -210,8 +215,8 @@ void Track::setupCheckpoints()
 {
 	for (int i = 0; i < CheckpointData2::MAX_ENTRIES; i++)
 	{
-		std::shared_ptr<Checkpoint>temp = std::make_shared<Checkpoint>(m_checkpointData2.m_pos[i], m_checkpointData2.m_size[i]);
-		temp->setOrigin(Vector2f(m_checkpointData2.m_size[i].x / 2.0f, m_checkpointData2.m_size[i].y / 2.0f));
+		Checkpoint temp(m_checkpointData2.m_pos[i], m_checkpointData2.m_size[i]);
+		temp.setOrigin(Vector2f(m_checkpointData2.m_size[i].x / 2.0f, m_checkpointData2.m_size[i].y / 2.0f));
 		m_checkpoints.push_back(temp);
 	}
 }
@@ -255,15 +260,15 @@ void Track::checkCarCollision()
 			}
 		}
 	}
-	if (m_car.getBounds().intersects(m_checkpoints.at(m_car.getCpNum())->getBounds())/*rectCollision(m_car.getBounds(), m_checkpoints.at(m_car.getCpNum())->getBounds(), m_car.getPos(), m_checkpoints.at(m_car.getCpNum())->getPos())*/)
+	if (m_car.getBounds().intersects(m_checkpoints.at(m_car.getCpNum()).getBounds())/*rectCollision(m_car.getBounds(), m_checkpoints.at(m_car.getCpNum())->getBounds(), m_car.getPos(), m_checkpoints.at(m_car.getCpNum())->getPos())*/)
 	{
-		m_checkpoints.at(m_car.getCpNum())->setPassed(true);
+		m_checkpoints.at(m_car.getCpNum()).setPassed(true);
 		m_car.nextCP();
 		if (m_car.getCpNum() == m_checkpoints.size())
 		{
-			for (std::shared_ptr<Checkpoint> c : m_checkpoints)
+			for (Checkpoint c : m_checkpoints)
 			{
-				c->setPassed(false);
+				c.setPassed(false);
 			}
 			m_car.setCPNum(0);
 			m_lapNum++;
@@ -437,14 +442,20 @@ bool Track::lineCollision(float x1, float y1, float x2, float y2, float x3, floa
 			if (t_backprop)
 			{
 				m_colCirc.at(t_circNum).setPosition(intersectionX, intersectionY);
-				m_inputs.at(t_inputNum1) = make_shared<float>(intersectionX);
-				m_inputs.at(t_inputNum2) = make_shared<float>(intersectionY);
+				m_inputs.at(t_inputNum1) = intersectionX;
+				m_inputs.at(t_inputNum2) = intersectionY;
+				m_inputs.at(10) = m_car.getPos().x;
+				m_inputs.at(11) = m_car.getPos().y;
+				m_inputs.at(12) = m_car.getSprite().getRotation();
 			}
 			else
 			{
 				m_colCircReinforcment.at(t_circNum).setPosition(intersectionX, intersectionY);
-				m_ReinforcementInputs.at(t_inputNum1) = make_shared<float>(intersectionX);
-				m_ReinforcementInputs.at(t_inputNum2) = make_shared<float>(intersectionY);
+				m_ReinforcementInputs.at(t_inputNum1) = intersectionX;
+				m_ReinforcementInputs.at(t_inputNum2) = intersectionY;
+				m_ReinforcementInputs.at(10) = m_ReinforcementCar.getPos().x;
+				m_ReinforcementInputs.at(11) = m_ReinforcementCar.getPos().y;
+				m_ReinforcementInputs.at(12) = m_ReinforcementCar.getSprite().getRotation();
 			}
 		}
 		return true;

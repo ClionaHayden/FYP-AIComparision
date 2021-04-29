@@ -1,8 +1,9 @@
 #include "Brain.h"
 
 Brain::Brain():
-	m_Reinforcementscore(0),
-	m_PastReinforcementscore(10000)
+	m_Reinforcementscore(-10000),
+	m_PastReinforcementscore(-10000),
+	m_bestRScore(-10000)
 {
 	init();
 }
@@ -15,13 +16,13 @@ void Brain::init()
 {
 	//set weights to random values between -1 and 1
 	//input layer to hidden
-	vector<shared_ptr<float>> layer;
+	vector<float> layer;
 	for (int i = 0; i < numInputs; i++)
 	{
 		for (int a = 0; a < numHidden; a++)
 		{
 			float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2))) - 1;
-			layer.push_back(make_shared<float>(r));
+			layer.push_back(r);
 		}
 		BPweightsLayer1.push_back(layer);
 		RweightsLayer1.push_back(layer);
@@ -34,7 +35,7 @@ void Brain::init()
 		for (int a = 0; a < numOutputs; a++)
 		{
 			float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (2))) - 1;
-			layer.push_back(make_shared<float>(r));
+			layer.push_back(r);
 		}
 		BPweightsLayer2.push_back(layer);
 		RweightsLayer2.push_back(layer);
@@ -45,14 +46,14 @@ void Brain::init()
 	//init vector arrays
 	for (int i = 0; i < numOutputs; i++)
 	{
-		BPoutputs.push_back(make_shared<float>(0.0f));
-		Routputs.push_back(make_shared<float>(0.0f)); 
-		q_values.push_back(make_shared<float>(0.0f));
+		BPOutputs.push_back((0.0f));
+		Routputs.push_back((0.0f)); 
+		q_values.push_back((0.0f));
 	}
-	max_q = make_shared<float>(0.0f);
+	max_q = 0.0f;
 }
 
-pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> t_inputs, bool t_reinforcement)
+pair<vector<float>, bool> Brain::Evaluate(vector<float> t_inputs, bool t_reinforcement)
 {
 	bool adjust = false;
 	if (s_gameState == GameState::Reinforcement)
@@ -75,33 +76,58 @@ pair<vector<shared_ptr<float>>, bool> Brain::Evaluate(vector<shared_ptr<float>> 
 		else
 		{
 			loadBPWeights();
-			BPoutputs = backprop(t_inputs);
+			BPOutputs = backprop(t_inputs);
 		}
 	}
-	return make_pair(BPoutputs, adjust);
+	return make_pair(BPOutputs, adjust);
 }
 
-void Brain::adjustWeights(vector<shared_ptr<float>> t_outputs)
+void Brain::adjustWeights(vector<float> t_outputs)
 {
-	if (m_PastReinforcementscore < m_Reinforcementscore)
+	if (m_PastReinforcementscore > m_Reinforcementscore)
 	{
-		for (int i = 0; i < numInputs; i++)
+		if (m_Reinforcementscore > m_bestRScore)
 		{
-			for (int j = 0; j < numHidden; j++)
+			saveRWeights();
+			m_bestRScore = m_Reinforcementscore;
+		}
+		else
+		{
+			loadRWeights();
+		}
+		float maxQ = 0;
+		vector<float> newQValues;
+		m_phi = 0;
+		for (int i = 0; i < numOutputs; i++)
+		{
+			if (q_values[i] > maxQ)
 			{
-				float error = m_soft[j] * (1 - m_soft[j]) * m_learningRate;
-				RweightsLayer1[i][j] = make_shared<float>(*RweightsLayer1[i][j] + (error * m_soft[j]));
+				maxQ = q_values[i];
 			}
+		}
+		for (int i = 0; i < numOutputs; i++)
+		{
+			float newQ = (1 - m_learningRate) * q_values[i] + m_learningRate * (m_Reinforcementscore + m_discountFactor * maxQ);
+			newQValues.push_back(newQ);
 		}
 		for (int i = 0; i < numHidden; i++)
 		{
 			for (int o = 0; o < numOutputs; o++)
 			{
-				if (*t_outputs[o] == 1.0f)
+				//if (t_outputs[o] == 1.0f)
 				{
-					float error = *q_values[o] * (1 - *q_values[o]) * m_learningRate;
-					RweightsLayer2[i][o] = make_shared<float>(*RweightsLayer2[i][o] + (error * *q_values[o]));
+					float error = newQValues[o] - q_values[o];
+					m_phi += error;
+					RweightsLayer2[i][o] = (RweightsLayer2[i][o] + (error * q_values[o]));
 				}
+			}
+		}
+		for (int i = 0; i < numInputs; i++)
+		{
+			for (int j = 0; j < numHidden; j++)
+			{
+				float error = m_soft[j] * (1 - m_soft[j]) * m_learningRate * m_phi;
+				RweightsLayer1[i][j] = (RweightsLayer1[i][j] + (error * m_soft[j]));
 			}
 		}
 	}
@@ -112,16 +138,16 @@ float Brain::Sigmoid(float z)
 	return 1.0 / (1.0 + exp(-z));
 }
 
-pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<float>> t_inputs)
+pair<vector<float>, bool> Brain::reinforcement(vector<float> t_inputs)
 {
 	m_PastReinforcementscore = m_Reinforcementscore;
 
-	vector<shared_ptr<float>> temp;
+	vector<float> temp;
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[40] = { 0.0 };
-	float soft[40] = { 0.0 };
+	float dot[30] = { 0.0 };
+	float soft[30] = { 0.0 };
 	float product = 0.0;
 
 	// apply weights input to hidden layer
@@ -130,7 +156,7 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 		product = 0.0;
 		for (int j = 0; j < numInputs; j++)
 		{
-			product = *t_inputs[j] * *RweightsLayer1[j][i];
+			product = t_inputs[j] * RweightsLayer1[j][i];
 			dot[i] += product;
 		}
 		m_soft[i] = ReLu(dot[i]);
@@ -143,40 +169,40 @@ pair<vector<shared_ptr<float>>, bool> Brain::reinforcement(vector<shared_ptr<flo
 		product = 0.0;
 		for (int j = 0; j < numHidden; j++)
 		{
-			product = m_soft[j] * *RweightsLayer2[j][i];
+			product = m_soft[j] * RweightsLayer2[j][i];
 			result += product;
 		}
 		result = Sigmoid(result);
-		temp.push_back(make_shared<float>(result));
+		temp.push_back(result);
 		result = 0.0f;
 	}
 	q_values = temp;
-	if (temp[4] < temp[0] && temp[4] < temp[1] &&
-		temp[4] < temp[2] && temp[4] < temp[3])
+	if ((temp[4] < temp[0]) && (temp[4] < temp[1]) &&
+		(temp[4] < temp[2]) && (temp[4] < temp[3]))
 	{
 		if (q_values[0] > q_values[1]) // left or right
 		{
-			temp[0] = make_shared<float>(1.0f);
-			temp[1] = make_shared<float>(0.0f);
+			temp[0] = (1.0f);
+			temp[1] = (0.0f);
 		}
 		else
 		{
-			temp[1] = make_shared<float>(1.0f);
-			temp[0] = make_shared<float>(0.0f);
+			temp[1] = (1.0f);
+			temp[0] = (0.0f);
 		}
 		if (q_values[2] > q_values[3]) // accel or decel
 		{
-			temp[2] = make_shared<float>(1.0f);
-			temp[3] = make_shared<float>(0.0f);
+			temp[2] = (1.0f);
+			temp[3] = (0.0f);
 		}
 		else
 		{
-			temp[2] = make_shared<float>(1.0f);
-			temp[3] = make_shared<float>(0.0f);
+			temp[2] = (1.0f);
+			temp[3] = (0.0f);
 		}
 	}
 
-	pair<vector<shared_ptr<float>>, bool> p = make_pair(temp, false);
+	pair<vector<float>, bool> p = make_pair(temp, false);
 
 	return p;
 }
@@ -189,7 +215,7 @@ void Brain::saveRWeights()
 	{
 		for (int j = 0; j < RweightsLayer1[i].size(); j++)
 		{
-			myfile << *RweightsLayer1[i][j] << ",";
+			myfile << RweightsLayer1[i][j] << ",";
 		}
 		myfile<< "\n";
 	}
@@ -197,11 +223,12 @@ void Brain::saveRWeights()
 	{
 		for (int j = 0; j < RweightsLayer2[i].size(); j++)
 		{
-			myfile << *RweightsLayer2[i][j] << ",";
+			myfile << RweightsLayer2[i][j] << ",";
 		}
 		myfile << "\n";
 	}
 	myfile.close();
+	cout << "Weights saved" << endl;
 }
 
 /// <summary>
@@ -232,7 +259,7 @@ void Brain::loadBPWeights()
 			while (getline(s, word, ','))
 			{
 				weight = stof(word);
-				BPweightsLayer1[i][index] = make_shared<float>(weight);
+				BPweightsLayer1[i][index] = weight;
 				//std::cout << "Inputs to Hidden: " << weight << std::endl;
 				index = index + 1;
 			}
@@ -255,7 +282,7 @@ void Brain::loadBPWeights()
 			while (getline(s, word, ','))
 			{
 				weight = stof(word);
-				BPweightsLayer2[i][index] = make_shared<float>(weight);
+				BPweightsLayer2[i][index] = weight;
 				//std::cout << "Inputs to Hidden: " << weight << std::endl;
 				index = index + 1;
 			}
@@ -294,7 +321,7 @@ void Brain::loadRWeights()
 			while (getline(s, word, ','))
 			{
 				weight = stof(word);
-				BPweightsLayer1[i][index] = make_shared<float>(weight);
+				RweightsLayer1[i][index] = weight;
 				//std::cout << "Inputs to Hidden: " << weight << std::endl;
 				index = index + 1;
 			}
@@ -312,7 +339,7 @@ void Brain::loadRWeights()
 			while (getline(s, word, ','))
 			{
 				weight = stof(word);
-				BPweightsLayer2[i][index] = make_shared<float>(weight);
+				RweightsLayer2[i][index] = (weight);
 				//std::cout << "Inputs to Hidden: " << weight << std::endl;
 				index = index + 1;
 			}
@@ -321,13 +348,13 @@ void Brain::loadRWeights()
 	weightsFile.close();
 }
 
-vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
+vector<float> Brain::backprop(vector<float> t_inputs)
 {
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[40] = { 0.0 };
-	float soft[40] = { 0.0 };
+	float dot[30] = { 0.0 };
+	float soft[30] = { 0.0 };
 	float product = 0.0;
 	// apply weights input to hidden layer
 	for (int i = 0; i < numHidden; i++)
@@ -335,53 +362,52 @@ vector<shared_ptr<float>> Brain::backprop(vector<shared_ptr<float>> t_inputs)
 		product = 0.0;
 		for (int j = 0; j < numInputs; j++)
 		{
-			product = *t_inputs[j] * *BPweightsLayer1[j][i];
+			product = t_inputs[j] * BPweightsLayer1[j][i];
 			dot[i] += product;
 		}
 		soft[i] = ReLu(dot[i]);
 	}
-	SoftMax(soft, numHidden);
-	BPHiddenOutputs.clear();
+	//SoftMax(soft, numHidden);
+	BPOutputs.clear();
 	//apply weights hidden to output
 	for (int i = 0; i < numOutputs; i++)
 	{
 		product = 0.0;
 		for (int j = 0; j < numHidden; j++)
 		{
-			product = soft[j] * *BPweightsLayer2[j][i];
+			product = soft[j] * BPweightsLayer2[j][i];
 			result += product;
 		}
 		result = Sigmoid(result);
-		BPHiddenOutputs.push_back(make_shared<float>(result));
+		BPOutputs.push_back(result);
 		result = 0.0f;
 	}
-
-	if(BPHiddenOutputs[4] < BPHiddenOutputs[0] && BPHiddenOutputs[4] < BPHiddenOutputs[1] &&
-		BPHiddenOutputs[4] < BPHiddenOutputs[2] && BPHiddenOutputs[4] < BPHiddenOutputs[3])
+	if((BPOutputs[4] < BPOutputs[0]) && (BPOutputs[4] < BPOutputs[1]) &&
+		(BPOutputs[4] < BPOutputs[2]) && (BPOutputs[4] < BPOutputs[3]))
 	{
-		if (BPHiddenOutputs[0] > BPHiddenOutputs[1]) // left or right
+		if (BPOutputs[0] > BPOutputs[1]) // left or right
 		{
-			BPHiddenOutputs[0] = make_shared<float>(1.0f);
-			BPHiddenOutputs[1] = make_shared<float>(0.0f);
+			BPOutputs[0] =(1.0f);
+			BPOutputs[1] = (0.0f);
 		}
 		else
 		{
-			BPHiddenOutputs[1] = make_shared<float>(1.0f);
-			BPHiddenOutputs[0] = make_shared<float>(0.0f);
+			BPOutputs[1] = (1.0f);
+			BPOutputs[0] = (0.0f);
 		}
-		if (BPHiddenOutputs[2] > BPHiddenOutputs[3]) // accel or decel
+		if (BPOutputs[2] > BPOutputs[3]) // accel or decel
 		{
-			BPHiddenOutputs[2] = make_shared<float>(1.0f);
-			BPHiddenOutputs[3] = make_shared<float>(0.0f);
+			BPOutputs[2] = (1.0f);
+			BPOutputs[3] = (0.0f);
 		}
 		else
 		{
-			BPHiddenOutputs[2] = make_shared<float>(1.0f);
-			BPHiddenOutputs[3] = make_shared<float>(0.0f);
+			BPOutputs[3] = (1.0f);
+			BPOutputs[2] = (0.0f);
 		}
 	}
 
-	return BPHiddenOutputs;
+	return BPOutputs;
 }
 
 void Brain::SoftMax(float data[], int len)

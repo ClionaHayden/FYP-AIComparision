@@ -26,19 +26,19 @@ private:
 	std::vector<Boundry> m_boundries;
 	boundryData1 m_boundryData1;
 	boundryData2 m_boundryData2;
-	std::vector<std::shared_ptr<Checkpoint>> m_checkpoints;
+	std::vector<Checkpoint> m_checkpoints;
 	std::vector<CircleShape> m_colCirc;
 	CheckpointData1 m_checkpointData1;
 	CheckpointData2 m_checkpointData2;
 	bool m_drawBoundry;
+	Time m_colisionTimer;
 
 	Car m_car;
 	shared_ptr<Brain> m_brain;
-	vector<shared_ptr<float>> m_inputs;
+	vector<float> m_inputs;
 
 	Car m_ReinforcementCar;
-	shared_ptr<Brain> m_ReinforcementBrain;
-	vector<shared_ptr<float>> m_ReinforcementInputs;
+	vector<float> m_ReinforcementInputs;
 	std::vector<CircleShape> m_colCircReinforcment;
 
 	sf::Time m_inputTimer;
@@ -52,7 +52,7 @@ private:
 
 	void setup();
 	void setupText();
-	int calculateReinforcmentScore();
+	float calculateReinforcmentScore();
 	void setupBoundries();
 	void setupCheckpoints();
 	void checkCarCollision();

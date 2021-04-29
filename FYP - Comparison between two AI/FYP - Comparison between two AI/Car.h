@@ -14,15 +14,17 @@ class Car
 public:
 	Car(Vector2f t_startPos, float t_startSpeed);
 	~Car();
-	void update(Time t_deltaTime);
+	void update(Time t_deltaTime,Vector2f t_cpPos);
 	void render(RenderWindow& t_window,bool t_debug);
-	void handleInput(vector<shared_ptr<float>> t_inputs);
+	void handleInput(vector<float> t_inputs);
 	Vector2f getPos() { return m_pos; };
 	std::vector<Vector2f> getColLines() { return m_collisionLines; };
 	std::vector<Vector2f> getRays() { return m_raycasts; };
 	void push(Vector2f t_dir) { m_pos += t_dir; };
 	Sprite getSprite() { return m_sprite; }
 	FloatRect getBounds() { return m_sprite.getGlobalBounds(); };
+	float getRotation() { return m_rotation; }
+	void setRotation(float t_new) { m_rotation = t_new; }
 
 	void collidesBoundary(shared_ptr<Brain> t_brain);
 	void collidesPassedCP();
@@ -31,7 +33,7 @@ public:
 	void nextCP() { m_cpNum++; };
 	void setCPNum(int t_new) { m_cpNum = t_new; };
 	int getCpNum() { return m_cpNum; };
-	void processOutputs(vector<shared_ptr<float>> t_outputs);
+	void processOutputs(vector<float> t_outputs);
 	void reset();
 	void setColLineLength(vector<float> t_lengths);
 	void updateColLines();
@@ -39,6 +41,7 @@ public:
 
 	Time m_CPTimer;
 	float collLineLengths[5];
+	bool m_test = false;
 
 private:
 	Sprite m_sprite;
@@ -78,7 +81,7 @@ private:
 	Backprop m_backprop;
 
 	void setup();
-	void move(Time t_deltaTime);
+	void move(Time t_deltaTime, Vector2f t_cpPos);
 	Vector2f normalise(Vector2f t_vec);
 	float distance(Vector2f t_vec1, Vector2f t_vec2);
 	void replayLearning();
@@ -86,4 +89,5 @@ private:
 	void turnRight();
 	void accelerate();
 	void decelerate();
+	void moveTowardsCheckpoint(Time t_deltaTime, Vector2f t_CPpos);
 };
