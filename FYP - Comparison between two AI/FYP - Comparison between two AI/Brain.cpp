@@ -107,7 +107,8 @@ void Brain::adjustWeights(vector<float> t_outputs)
 		}
 		for (int i = 0; i < numOutputs; i++)
 		{
-			float newQ = (1 - m_learningRate) * q_values[i] + m_learningRate * (m_Reinforcementscore + m_discountFactor * maxQ);
+			float newQ;
+			newQ = (1 - m_learningRate) * q_values[i] + m_learningRate * (m_Reinforcementscore + m_discountFactor * maxQ);
 			newQValues.push_back(newQ);
 		}
 		for (int i = 0; i < numHidden; i++)
@@ -146,8 +147,8 @@ pair<vector<float>, bool> Brain::reinforcement(vector<float> t_inputs)
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[30] = { 0.0 };
-	float soft[30] = { 0.0 };
+	float dot[1] = { 0.0 };
+	float soft[1] = { 0.0 };
 	float product = 0.0;
 
 	// apply weights input to hidden layer
@@ -201,6 +202,9 @@ pair<vector<float>, bool> Brain::reinforcement(vector<float> t_inputs)
 			temp[3] = (0.0f);
 		}
 	}
+	else
+		temp[4] = 1.0f;
+
 
 	pair<vector<float>, bool> p = make_pair(temp, false);
 
@@ -353,8 +357,8 @@ vector<float> Brain::backprop(vector<float> t_inputs)
 	float result = 0.0;
 	int layer = 0;
 
-	float dot[30] = { 0.0 };
-	float soft[30] = { 0.0 };
+	float dot[1] = { 0.0 };
+	float soft[1] = { 0.0 };
 	float product = 0.0;
 	// apply weights input to hidden layer
 	for (int i = 0; i < numHidden; i++)
@@ -367,7 +371,7 @@ vector<float> Brain::backprop(vector<float> t_inputs)
 		}
 		soft[i] = ReLu(dot[i]);
 	}
-	//SoftMax(soft, numHidden);
+	SoftMax(soft, numHidden);
 	BPOutputs.clear();
 	//apply weights hidden to output
 	for (int i = 0; i < numOutputs; i++)
@@ -382,12 +386,12 @@ vector<float> Brain::backprop(vector<float> t_inputs)
 		BPOutputs.push_back(result);
 		result = 0.0f;
 	}
-	if((BPOutputs[4] < BPOutputs[0]) && (BPOutputs[4] < BPOutputs[1]) &&
+	if ((BPOutputs[4] < BPOutputs[0]) && (BPOutputs[4] < BPOutputs[1]) &&
 		(BPOutputs[4] < BPOutputs[2]) && (BPOutputs[4] < BPOutputs[3]))
 	{
 		if (BPOutputs[0] > BPOutputs[1]) // left or right
 		{
-			BPOutputs[0] =(1.0f);
+			BPOutputs[0] = (1.0f);
 			BPOutputs[1] = (0.0f);
 		}
 		else
@@ -406,6 +410,8 @@ vector<float> Brain::backprop(vector<float> t_inputs)
 			BPOutputs[2] = (0.0f);
 		}
 	}
+	else
+		BPOutputs[4] = 1.0f;
 
 	return BPOutputs;
 }

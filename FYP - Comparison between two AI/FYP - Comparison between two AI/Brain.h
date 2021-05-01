@@ -16,7 +16,7 @@ class Brain
 {
 public:
 	const int numInputs = 13;
-	const int numHidden = 30;
+	const int numHidden = 1;
 	const int numOutputs = 5;
 
 	vector<vector<float>>  BPweightsLayer1;	// From inputs to hidden layer

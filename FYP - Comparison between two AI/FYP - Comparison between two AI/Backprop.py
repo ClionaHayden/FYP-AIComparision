@@ -12,7 +12,7 @@ X = dataset[:,0:13]
 y = dataset[:,13:18]
 
 model = Sequential()
-model.add(Dense(30, input_dim=13, activation='relu'))
+model.add(Dense(1, input_dim=13, activation='relu'))
 model.add(Dense(5, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -49,3 +49,4 @@ with open('DATA/CalculatedWeights.csv', mode='w') as weights_file:
             for item2 in item:   
                 weights_writer.writerow(item2.flatten())
         index = index+1
+print('Accuracy: %.2f' % (accuracy*100))

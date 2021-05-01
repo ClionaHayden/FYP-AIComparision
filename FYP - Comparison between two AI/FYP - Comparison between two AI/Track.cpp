@@ -186,7 +186,7 @@ float Track::calculateReinforcmentScore()
 {
 	m_brain->m_PastReinforcementscore = m_brain->m_Reinforcementscore;
 	float score = 0;
-	score = lengthOfLine(m_checkpoints[m_car.getCpNum()].getPos(), m_car.getPos()) + 100;
+	score = lengthOfLine(m_checkpoints[m_car.getCpNum()].getPos(), m_car.getPos()) + 80;
 	int nextcp = m_car.getCpNum() + 1;
 	for (int i = m_car.getCpNum(); i < m_checkpoints.size(); i++)
 	{
