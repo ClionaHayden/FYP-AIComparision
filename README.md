@@ -4,3 +4,4 @@ A project to compare an AI neural network which has learned form backpropagation
 
 Document links:
 Research Document - https://docs.google.com/document/d/1-hFOBqPTLm5kHiCGMsYQ14QuTKKDeJOfsvrAM-OyBX8/edit?usp=sharing
+Google Drive - https://drive.google.com/drive/folders/1FzXSRo9IIwdLSr-npX9_bgt90pGOqhJr?usp=sharing
