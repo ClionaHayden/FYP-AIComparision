@@ -11,7 +11,9 @@ Brain::Brain():
 Brain::~Brain()
 {
 }
-
+/// <summary>
+/// initialise brain to random weights before it is trained
+/// </summary>
 void Brain::init()
 {
 	//set weights to random values between -1 and 1
@@ -53,6 +55,12 @@ void Brain::init()
 	max_q = 0.0f;
 }
 
+/// <summary>
+/// Calculates the brain's outputs 
+/// </summary>
+/// <param name="t_inputs"> inputs for the brain to process </param>
+/// <param name="t_reinforcement"> true if the brain is to run from reinforcement weights </param>
+/// <returns> new outputs </returns>
 pair<vector<float>, bool> Brain::Evaluate(vector<float> t_inputs, bool t_reinforcement)
 {
 	bool adjust = false;
@@ -82,6 +90,10 @@ pair<vector<float>, bool> Brain::Evaluate(vector<float> t_inputs, bool t_reinfor
 	return make_pair(BPOutputs, adjust);
 }
 
+/// <summary>
+/// Adjusts the reinforcemnet  weights as per the Q-Learning algorithm, currently inaccurate
+/// </summary>
+/// <param name="t_outputs"> brain outputs </param>
 void Brain::adjustWeights(vector<float> t_outputs)
 {
 	if (m_PastReinforcementscore > m_Reinforcementscore)
@@ -134,11 +146,21 @@ void Brain::adjustWeights(vector<float> t_outputs)
 	}
 }
 
+/// <summary>
+/// the sigmoid activation function for the neural networks
+/// </summary>
+/// <param name="z"> value to be evaluated </param>
+/// <returns> sigmoid value of z </returns>
 float Brain::Sigmoid(float z)
 {
 	return 1.0 / (1.0 + exp(-z));
 }
 
+/// <summary>
+/// Evaluates the brain based off the reinforcement weights
+/// </summary>
+/// <param name="t_inputs"> inputs to be processed </param>
+/// <returns> calculated outputs </returns>
 pair<vector<float>, bool> Brain::reinforcement(vector<float> t_inputs)
 {
 	m_PastReinforcementscore = m_Reinforcementscore;
@@ -211,6 +233,9 @@ pair<vector<float>, bool> Brain::reinforcement(vector<float> t_inputs)
 	return p;
 }
 
+/// <summary>
+/// saves reinforcemnet weights to a file
+/// </summary>
 void Brain::saveRWeights()
 {
 	std::ofstream myfile;
@@ -236,7 +261,7 @@ void Brain::saveRWeights()
 }
 
 /// <summary>
-/// load backprop weights
+/// load backprop weights from file
 /// </summary>
 void Brain::loadBPWeights()
 {
@@ -300,6 +325,9 @@ void Brain::loadBPWeights()
 	weightsFile.close();
 }
 
+/// <summary>
+/// load reinforcemnt weights from file
+/// </summary>
 void Brain::loadRWeights()
 {
 	vector<string> row;
@@ -352,6 +380,11 @@ void Brain::loadRWeights()
 	weightsFile.close();
 }
 
+/// <summary>
+/// evaluate the neural network based off backprop weights
+/// </summary>
+/// <param name="t_inputs"> inputs to be processed </param>
+/// <returns> calculated outputs </returns>
 vector<float> Brain::backprop(vector<float> t_inputs)
 {
 	float result = 0.0;
@@ -416,6 +449,11 @@ vector<float> Brain::backprop(vector<float> t_inputs)
 	return BPOutputs;
 }
 
+/// <summary>
+/// the softmax function to be used in neural network evaluation
+/// </summary>
+/// <param name="data"> data array to be processed </param>
+/// <param name="len"> length of array </param>
 void Brain::SoftMax(float data[], int len)
 {
 	float sum = 0;
@@ -430,6 +468,11 @@ void Brain::SoftMax(float data[], int len)
 	}
 }
 
+/// <summary>
+/// the softmax function to be used in neural network evaluation
+/// </summary>
+/// <param name="data"> data vector to be processed </param>
+/// <param name="len"> length of array </param>
 void Brain::SoftMaxVector(vector<float> data, int len)
 {
 	float sum = 0;
@@ -444,6 +487,11 @@ void Brain::SoftMaxVector(vector<float> data, int len)
 	}
 }
 
+/// <summary>
+/// the ReLu activation function for the neural networks
+/// </summary>
+/// <param name="val"> value to be processed </param>
+/// <returns> calcu;ated value </returns>
 float Brain::ReLu(float val)
 {
 	if (val < 0) val = 0;
